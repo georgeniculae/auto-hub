@@ -1,4 +1,4 @@
-package com.autohub.apigateway.cache;
+package com.autohub.apigateway.config.property;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

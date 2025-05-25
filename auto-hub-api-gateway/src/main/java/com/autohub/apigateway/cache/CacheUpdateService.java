@@ -3,6 +3,7 @@ package com.autohub.apigateway.cache;
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.whitelist.ValidationErrorsWhitelist;
 import com.atlassian.oai.validator.whitelist.rule.WhitelistRules;
+import com.autohub.apigateway.config.property.RegisteredEndpoints;
 import com.autohub.apigateway.retry.RetryHandler;
 import com.autohub.apigateway.util.Constants;
 import lombok.RequiredArgsConstructor;

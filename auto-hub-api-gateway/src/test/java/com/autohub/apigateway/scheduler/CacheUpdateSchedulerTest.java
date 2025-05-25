@@ -1,7 +1,7 @@
 package com.autohub.apigateway.scheduler;
 
 import com.autohub.apigateway.cache.OpenApiCache;
-import com.autohub.apigateway.cache.RegisteredEndpoints;
+import com.autohub.apigateway.config.property.RegisteredEndpoints;
 import com.autohub.apigateway.util.TestUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
