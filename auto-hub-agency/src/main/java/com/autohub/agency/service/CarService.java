@@ -12,7 +12,6 @@ import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.dto.common.CarStatusUpdate;
 import com.autohub.dto.common.CarUpdateDetails;
 import com.autohub.dto.common.UpdateCarsRequest;
-import com.autohub.exception.AutoHubException;
 import com.autohub.exception.AutoHubNotFoundException;
 import com.autohub.exception.AutoHubResponseStatusException;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @Service
@@ -90,14 +88,15 @@ public class CarService {
     }
 
     public CarResponse updateCar(Long id, CarRequest updatedCarRequest, MultipartFile image) {
-        Future<Car> existingCarFuture = getFuture(() -> findEntityById(id));
-        Future<Branch> originalBranch = getFuture(() -> branchService.findEntityById(updatedCarRequest.originalBranchId()));
-        Future<Branch> actualBranch = getFuture(() -> branchService.findEntityById(updatedCarRequest.actualBranchId()));
+        CompletableFuture<Car> existingCarFuture = getCompletableFuture(() -> findEntityById(id));
+        CompletableFuture<Branch> originalBranch = getCompletableFuture(() -> branchService.findEntityById(updatedCarRequest.originalBranchId()));
+        CompletableFuture<Branch> actualBranch = getCompletableFuture(() -> branchService.findEntityById(updatedCarRequest.actualBranchId()));
+        CompletableFuture.allOf(existingCarFuture, originalBranch, actualBranch).join();
 
-        Car existingCar = getFutureResult(existingCarFuture);
+        Car existingCar = getCompletableFutureResult(existingCarFuture);
 
-        existingCar.setOriginalBranch(getFutureResult(originalBranch));
-        existingCar.setActualBranch(getFutureResult(actualBranch));
+        existingCar.setOriginalBranch(getCompletableFutureResult(originalBranch));
+        existingCar.setActualBranch(getCompletableFutureResult(actualBranch));
         existingCar.setMake(updatedCarRequest.make());
         existingCar.setModel(updatedCarRequest.model());
         existingCar.setBodyType(BodyType.valueOf(updatedCarRequest.bodyCategory().name()));
@@ -188,19 +187,12 @@ public class CarService {
         );
     }
 
-    private <T> Future<T> getFuture(Callable<T> branchCallable) {
-        return executorService.submit(branchCallable);
+    private <T> CompletableFuture<T> getCompletableFuture(Supplier<T> supplier) {
+        return CompletableFuture.supplyAsync(supplier, executorService);
     }
 
-    private <T> T getFutureResult(Future<T> future) {
-        try {
-            return future.get();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new AutoHubException(e.getMessage());
-        } catch (ExecutionException e) {
-            throw new AutoHubException(e.getMessage());
-        }
+    private <T> T getCompletableFutureResult(CompletableFuture<T> future) {
+        return future.join();
     }
 
     private CarStatus getUpdatedCarStatus(UpdateCarsRequest updateCarRequests, Car car) {
