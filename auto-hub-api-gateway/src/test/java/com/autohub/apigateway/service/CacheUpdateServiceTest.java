@@ -1,33 +1,35 @@
-package com.autohub.apigateway.scheduler;
+package com.autohub.apigateway.service;
 
+import com.atlassian.oai.validator.OpenApiInteractionValidator;
+import com.autohub.apigateway.cache.CacheUpdateService;
 import com.autohub.apigateway.cache.OpenApiCache;
 import com.autohub.apigateway.config.property.RegisteredEndpoints;
 import com.autohub.apigateway.retry.RetryHandler;
 import com.autohub.apigateway.util.TestUtil;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@TestPropertySource(properties = "spring.cloud.consul.enabled=false")
-class CacheUpdateSchedulerTest {
+@ExtendWith(MockitoExtension.class)
+class CacheUpdateServiceTest {
 
     private static String agencyContent;
     private static String aiContent;
@@ -36,34 +38,34 @@ class CacheUpdateSchedulerTest {
     private static String expenseContent;
     private static List<RegisteredEndpoints.RegisteredEndpoint> endpoints;
 
-    @Autowired
-    private CacheUpdateScheduler cacheUpdateScheduler;
+    @InjectMocks
+    private CacheUpdateService cacheUpdateService;
 
-    @Autowired
+    @Mock
     private OpenApiCache openApiCache;
 
-    @MockitoBean
+    @Mock
     private WebClient webClient;
 
-    @MockitoBean
+    @Mock
     @SuppressWarnings("rawtypes")
     private WebClient.RequestHeadersUriSpec requestHeadersUriSpec;
 
-    @MockitoBean
+    @Mock
     @SuppressWarnings("rawtypes")
     private WebClient.RequestHeadersSpec requestHeadersSpec;
 
-    @MockitoBean
+    @Mock
     private WebClient.ResponseSpec responseSpec;
 
-    @MockitoBean
+    @Mock
     private RegisteredEndpoints registeredEndpoints;
 
-    @MockitoBean
+    @Mock
     private RetryHandler retryHandler;
 
     @BeforeAll
-    static void setUp() {
+    static void init() {
         agencyContent =
                 TestUtil.getResourceAsJson("/data/AutoHubReactiveAgencySwagger.json", String.class);
         aiContent =
@@ -84,14 +86,14 @@ class CacheUpdateSchedulerTest {
         );
     }
 
-    @AfterEach
-    void tearDown() {
-        openApiCache.toMap().clear();
+    @BeforeEach
+    void setUp() {
+        when(retryHandler.retry()).thenReturn(Retry.fixedDelay(3, Duration.ZERO));
     }
 
     @Test
     @SuppressWarnings("all")
-    void updateCacheTest_success() {
+    void populateCache_success() {
         when(registeredEndpoints.getEndpoints()).thenReturn(endpoints);
         when(webClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
@@ -115,47 +117,23 @@ class CacheUpdateSchedulerTest {
                 }
             }
         });
-        when(retryHandler.retry()).thenReturn(Retry.backoff(0, Duration.ZERO));
+        when(openApiCache.toMap()).thenReturn(new ConcurrentHashMap<>());
 
-        assertDoesNotThrow(() -> cacheUpdateScheduler.updateCache());
-        assertEquals(5, openApiCache.toMap().size());
+        cacheUpdateService.populateCache()
+                .as(StepVerifier::create)
+                .expectNextCount(5)
+                .verifyComplete();
+
+        verify(openApiCache).put(eq("agency"), any(OpenApiInteractionValidator.class));
+        verify(openApiCache).put(eq("ai"), any(OpenApiInteractionValidator.class));
+        verify(openApiCache).put(eq("bookings"), any(OpenApiInteractionValidator.class));
+        verify(openApiCache).put(eq("customers"), any(OpenApiInteractionValidator.class));
+        verify(openApiCache).put(eq("expense"), any(OpenApiInteractionValidator.class));
     }
 
     @Test
     @SuppressWarnings("all")
-    void updateCache_errorWhenGettingExpenseSwagger() {
-        when(registeredEndpoints.getEndpoints()).thenReturn(endpoints);
-        when(webClient.get()).thenReturn(requestHeadersUriSpec);
-        when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
-        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.bodyToMono(String.class)).thenAnswer(new Answer() {
-            private int count = 0;
-
-            public Object answer(InvocationOnMock invocation) {
-                count++;
-
-                if (count == 1) {
-                    return Mono.just(agencyContent);
-                } else if (count == 2) {
-                    return Mono.just(aiContent);
-                } else if (count == 3) {
-                    return Mono.just(bookingsContent);
-                } else if (count == 4) {
-                    return Mono.just(customersContent);
-                } else {
-                    return Mono.error(new RuntimeException("Test"));
-                }
-            }
-        });
-        when(retryHandler.retry()).thenReturn(Retry.backoff(0, Duration.ZERO));
-
-        assertDoesNotThrow(() -> cacheUpdateScheduler.updateCache());
-        assertEquals(4, openApiCache.toMap().size());
-    }
-
-    @Test
-    @SuppressWarnings("all")
-    void updateCache_emptyExpenseSwagger() {
+    void populateCache_emptySwaggerContent() {
         when(registeredEndpoints.getEndpoints()).thenReturn(endpoints);
         when(webClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
@@ -179,10 +157,56 @@ class CacheUpdateSchedulerTest {
                 }
             }
         });
-        when(retryHandler.retry()).thenReturn(Retry.backoff(0, Duration.ZERO));
+        when(openApiCache.toMap()).thenReturn(new ConcurrentHashMap<>());
 
-        assertDoesNotThrow(() -> cacheUpdateScheduler.updateCache());
-        assertEquals(4, openApiCache.toMap().size());
+        cacheUpdateService.populateCache()
+                .as(StepVerifier::create)
+                .expectNextCount(4)
+                .verifyComplete();
+
+        verify(openApiCache).put(eq("agency"), any(OpenApiInteractionValidator.class));
+        verify(openApiCache).put(eq("ai"), any(OpenApiInteractionValidator.class));
+        verify(openApiCache).put(eq("bookings"), any(OpenApiInteractionValidator.class));
+        verify(openApiCache).put(eq("customers"), any(OpenApiInteractionValidator.class));
+    }
+
+    @Test
+    @SuppressWarnings("all")
+    void populateCache_errorOnGettingSwagger() {
+        when(registeredEndpoints.getEndpoints()).thenReturn(endpoints);
+        when(webClient.get()).thenReturn(requestHeadersUriSpec);
+        when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
+        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.bodyToMono(String.class)).thenAnswer(new Answer() {
+            private int count = 0;
+
+            public Object answer(InvocationOnMock invocation) {
+                count++;
+
+                if (count == 1) {
+                    return Mono.just(agencyContent);
+                } else if (count == 2) {
+                    return Mono.just(aiContent);
+                } else if (count == 3) {
+                    return Mono.just(bookingsContent);
+                } else if (count == 4) {
+                    return Mono.just(customersContent);
+                } else {
+                    return Mono.error(new RuntimeException("Test"));
+                }
+            }
+        });
+        when(openApiCache.toMap()).thenReturn(new ConcurrentHashMap<>());
+
+        cacheUpdateService.populateCache()
+                .as(StepVerifier::create)
+                .expectNextCount(4)
+                .verifyComplete();
+
+        verify(openApiCache).put(eq("agency"), any(OpenApiInteractionValidator.class));
+        verify(openApiCache).put(eq("ai"), any(OpenApiInteractionValidator.class));
+        verify(openApiCache).put(eq("bookings"), any(OpenApiInteractionValidator.class));
+        verify(openApiCache).put(eq("customers"), any(OpenApiInteractionValidator.class));
     }
 
 }
