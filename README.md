@@ -51,7 +51,7 @@ leverages Spring Boot for building the application, Maven for dependency managem
 - Java 24 or higher
 - Maven 3.6 or higher
 - Kafka (for messaging functionality)
-- SQL Database
+- PostgreSQL Database
 
 ### Installation
 
