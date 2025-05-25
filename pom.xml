@@ -26,7 +26,6 @@
         <module>auto-hub-customer</module>
         <module>auto-hub-email-notification</module>
         <module>auto-hub-expense</module>
-        <module>auto-hub-request-validator</module>
     </modules>
 
     <repositories>

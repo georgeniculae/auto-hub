@@ -157,4 +157,21 @@ cors:
   allowedHeaders: '*'
   codecMaxInMemorySizeInMb: 20
 
-request-validator-url: http://auto-hub-request-validator/validate
+swagger:
+  endpoints:
+    - identifier: agency
+      url: http://auto-hub-agency/agency/definition/v3/api-docs
+    - identifier: ai
+      url: http://auto-hub-ai/ai/definition/v3/api-docs
+    - identifier: bookings
+      url: http://auto-hub-booking/bookings/definition/v3/api-docs
+    - identifier: customers
+      url: http://auto-hub-customer/customers/definition/v3/api-docs
+    - identifier: expense
+      url: http://auto-hub-expense/expense/definition/v3/api-docs
+
+cache:
+  swagger-update-frequency: 0 0 5 * * *
+  expire-after-rewrite-duration: PT23H59M59.999S
+  initial-capacity: 5
+  maximum-size: 50

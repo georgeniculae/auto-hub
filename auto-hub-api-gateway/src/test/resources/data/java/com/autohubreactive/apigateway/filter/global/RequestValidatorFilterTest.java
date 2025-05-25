@@ -1,8 +1,8 @@
-package com.autohub.apigateway.filter.global;
+package com.autohubreactive.apigateway.filter.global;
 
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
-import com.autohub.apigateway.cache.OpenApiCache;
-import com.autohub.apigateway.util.TestUtil;
+import com.autohubreactive.apigateway.cache.OpenApiCache;
+import com.autohubreactive.apigateway.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
