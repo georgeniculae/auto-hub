@@ -1,5 +1,6 @@
 package com.autohub.booking.service;
 
+import com.autohub.booking.util.Constants;
 import com.autohub.dto.common.AuthenticationInfo;
 import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.exception.AutoHubNotFoundException;
@@ -19,14 +20,13 @@ import java.util.Optional;
 @Slf4j
 public class CarService {
 
-    private static final String SEPARATOR = "/";
     private final RestClient restClient;
 
     @Value("${rest-client.url.auto-hub-agency-cars}")
     private String url;
 
     public AvailableCarInfo findAvailableCarById(AuthenticationInfo authenticationInfo, Long carId) {
-        String finalUrl = url + SEPARATOR + carId + SEPARATOR + "availability";
+        String finalUrl = url + Constants.SEPARATOR + carId + Constants.SEPARATOR + "availability";
 
         return restClient.get()
                 .uri(finalUrl)

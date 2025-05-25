@@ -3,6 +3,7 @@ package com.autohub.lib.exceptionhandling;
 import com.autohub.exception.AutoHubException;
 import com.autohub.exception.AutoHubNotFoundException;
 import com.autohub.exception.AutoHubResponseStatusException;
+import com.autohub.lib.util.Constants;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;
@@ -20,10 +21,6 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ExceptionHandling extends DefaultErrorAttributes {
-
-    private static final String MESSAGE = "message";
-    private static final String STATUS = "status";
-    private static final String ERROR = "error";
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(Exception e, WebRequest request) {
@@ -102,9 +99,9 @@ public class ExceptionHandling extends DefaultErrorAttributes {
                                                       HttpStatus httpStatus) {
         Map<String, Object> errorAttributes = super.getErrorAttributes(webRequest, ErrorAttributeOptions.defaults());
 
-        errorAttributes.put(MESSAGE, errorMessage);
-        errorAttributes.put(STATUS, httpStatus.value());
-        errorAttributes.put(ERROR, cause);
+        errorAttributes.put(Constants.MESSAGE, errorMessage);
+        errorAttributes.put(Constants.STATUS, httpStatus.value());
+        errorAttributes.put(Constants.ERROR, cause);
 
         return errorAttributes;
     }

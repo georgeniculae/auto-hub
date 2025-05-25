@@ -1,5 +1,6 @@
 package com.autohub.emailnotification.service;
 
+import com.autohub.emailnotification.util.Constants;
 import com.autohub.exception.AutoHubException;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
@@ -20,12 +21,6 @@ import java.io.StringWriter;
 @RequiredArgsConstructor
 public class EmailService {
 
-    private static final String CONTENT_TYPE = "text/plain";
-    private static final String SUBJECT = "Invoice Notice";
-    private static final String ENDPOINT = "mail/send";
-    private static final String MAIL_TEMPLATE_FOLDER = "mail-template/";
-    private static final String FILE_NAME = "invoice-notice";
-    private static final String MUSTACHE_FORMAT = ".mustache";
     private final SendGrid sendGrid;
     private final MustacheFactory mustacheFactory;
 
@@ -39,7 +34,7 @@ public class EmailService {
         Request request = new Request();
 
         request.setMethod(Method.POST);
-        request.setEndpoint(ENDPOINT);
+        request.setEndpoint(Constants.ENDPOINT);
 
         try {
             request.setBody(mail.build());
@@ -54,10 +49,10 @@ public class EmailService {
         Email from = new Email(mailFrom, name);
         Email to = new Email(toAddressEmail);
 
-        Content content = new Content(CONTENT_TYPE, getMailBody(object));
+        Content content = new Content(Constants.CONTENT_TYPE, getMailBody(object));
 
-        Mail mail = new Mail(from, SUBJECT, to, content);
-        mail.setSubject(SUBJECT);
+        Mail mail = new Mail(from, Constants.SUBJECT, to, content);
+        mail.setSubject(Constants.SUBJECT);
 
         return mail;
     }
@@ -65,7 +60,7 @@ public class EmailService {
     private String getMailBody(Object object) {
         StringWriter stringWriter = new StringWriter();
 
-        Mustache mustache = mustacheFactory.compile(MAIL_TEMPLATE_FOLDER + FILE_NAME + MUSTACHE_FORMAT);
+        Mustache mustache = mustacheFactory.compile(Constants.MAIL_TEMPLATE_FOLDER + Constants.FILE_NAME + Constants.MUSTACHE_FORMAT);
         try {
             mustache.execute(stringWriter, object).flush();
         } catch (Exception e) {

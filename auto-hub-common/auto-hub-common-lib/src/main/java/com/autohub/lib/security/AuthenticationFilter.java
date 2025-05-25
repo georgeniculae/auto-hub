@@ -1,5 +1,6 @@
 package com.autohub.lib.security;
 
+import com.autohub.lib.util.Constants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,15 +25,13 @@ import java.util.List;
 @ConditionalOnProperty(prefix = "apikey", name = "secret")
 public class AuthenticationFilter extends OncePerRequestFilter {
 
-    private final static String X_API_KEY = "X-API-KEY";
-    private static final String X_ROLES = "X-ROLES";
     private final AuthenticationManager authenticationManager;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        String apikey = request.getHeader(X_API_KEY);
+        String apikey = request.getHeader(Constants.X_API_KEY);
 
         if (ObjectUtils.isNotEmpty(apikey)) {
             List<SimpleGrantedAuthority> roles = getRoles(request);
@@ -46,7 +45,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
     private List<SimpleGrantedAuthority> getRoles(HttpServletRequest request) {
-        return Collections.list(request.getHeaders(X_ROLES))
+        return Collections.list(request.getHeaders(Constants.X_ROLES))
                 .stream()
                 .map(SimpleGrantedAuthority::new)
                 .toList();

@@ -2,6 +2,7 @@ package com.autohub.expense.eventhandling;
 
 import com.autohub.exception.AutoHubException;
 import com.autohub.expense.entity.Invoice;
+import com.autohub.expense.util.Constants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.debezium.config.Configuration;
 import io.debezium.data.Envelope;
@@ -33,8 +34,6 @@ import static io.debezium.data.Envelope.Operation;
 @Slf4j
 public class DebeziumListener implements RetryListener {
 
-    private static final String UNDERSCORE = "_";
-    private static final char UNDERSCORE_CHAR = '_';
     private final DebeziumEngine<RecordChangeEvent<SourceRecord>> debeziumEngine;
     private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
     private final InvoiceProcessorService invoiceProcessorService;
@@ -98,8 +97,8 @@ public class DebeziumListener implements RetryListener {
     }
 
     private String getUpdatedFieldName(String fieldName) {
-        if (fieldName.contains(UNDERSCORE)) {
-            return CaseUtils.toCamelCase(fieldName, false, UNDERSCORE_CHAR);
+        if (fieldName.contains(Constants.UNDERSCORE)) {
+            return CaseUtils.toCamelCase(fieldName, false, Constants.UNDERSCORE_CHAR);
         }
 
         return fieldName;

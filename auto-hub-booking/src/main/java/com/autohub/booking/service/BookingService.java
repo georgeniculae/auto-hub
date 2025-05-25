@@ -4,6 +4,7 @@ import com.autohub.booking.entity.Booking;
 import com.autohub.booking.entity.BookingStatus;
 import com.autohub.booking.mapper.BookingMapper;
 import com.autohub.booking.repository.BookingRepository;
+import com.autohub.booking.util.Constants;
 import com.autohub.dto.booking.BookingRequest;
 import com.autohub.dto.common.AuthenticationInfo;
 import com.autohub.dto.common.AvailableCarInfo;
@@ -36,7 +37,6 @@ import java.util.stream.Stream;
 @Slf4j
 public class BookingService implements RetryListener {
 
-    private static final String LOCKED = "Locked";
     private final BookingRepository bookingRepository;
     private final CarService carService;
     private final RedisTemplate<String, String> redisTemplate;
@@ -209,7 +209,7 @@ public class BookingService implements RetryListener {
     }
 
     private void lockCar(String carId) {
-        Boolean isUsed = redisTemplate.opsForValue().setIfAbsent(carId, LOCKED, Duration.ofSeconds(30));
+        Boolean isUsed = redisTemplate.opsForValue().setIfAbsent(carId, Constants.LOCKED, Duration.ofSeconds(30));
 
         if (Boolean.FALSE.equals(isUsed)) {
             throw new AutoHubResponseStatusException(HttpStatus.BAD_REQUEST, "Car is unavailable");

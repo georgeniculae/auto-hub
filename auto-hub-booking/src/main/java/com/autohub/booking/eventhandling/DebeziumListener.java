@@ -1,6 +1,7 @@
 package com.autohub.booking.eventhandling;
 
 import com.autohub.booking.entity.Booking;
+import com.autohub.booking.util.Constants;
 import com.autohub.exception.AutoHubException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.debezium.config.Configuration;
@@ -33,8 +34,6 @@ import static io.debezium.data.Envelope.Operation;
 @Slf4j
 public class DebeziumListener implements RetryListener {
 
-    private static final String UNDERSCORE = "_";
-    private static final char UNDERSCORE_CHAR = '_';
     private final DebeziumEngine<RecordChangeEvent<SourceRecord>> debeziumEngine;
     private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
     private final ObjectMapper objectMapper;
@@ -124,8 +123,8 @@ public class DebeziumListener implements RetryListener {
     }
 
     private String getCamelCaseFieldName(String fieldName) {
-        if (fieldName.contains(UNDERSCORE)) {
-            return CaseUtils.toCamelCase(fieldName, false, UNDERSCORE_CHAR);
+        if (fieldName.contains(Constants.UNDERSCORE)) {
+            return CaseUtils.toCamelCase(fieldName, false, Constants.UNDERSCORE_CHAR);
         }
 
         return fieldName;
