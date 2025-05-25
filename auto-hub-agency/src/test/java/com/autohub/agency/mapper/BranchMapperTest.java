@@ -1,11 +1,11 @@
 package com.autohub.agency.mapper;
 
+import com.autohub.agency.entity.Branch;
+import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.util.AssertionUtil;
 import com.autohub.agency.util.TestUtil;
 import com.autohub.dto.agency.BranchRequest;
 import com.autohub.dto.agency.BranchResponse;
-import com.autohub.agency.entity.Branch;
-import com.autohub.agency.entity.RentalOffice;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

@@ -1,5 +1,7 @@
 package com.autohub.agency.service;
 
+import com.autohub.agency.entity.Branch;
+import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.mapper.BranchMapper;
 import com.autohub.agency.mapper.BranchMapperImpl;
 import com.autohub.agency.repository.BranchRepository;
@@ -7,8 +9,6 @@ import com.autohub.agency.util.AssertionUtil;
 import com.autohub.agency.util.TestUtil;
 import com.autohub.dto.agency.BranchRequest;
 import com.autohub.dto.agency.BranchResponse;
-import com.autohub.agency.entity.Branch;
-import com.autohub.agency.entity.RentalOffice;
 import com.autohub.exception.AutoHubNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

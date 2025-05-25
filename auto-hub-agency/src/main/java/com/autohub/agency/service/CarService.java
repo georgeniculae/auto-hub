@@ -1,5 +1,9 @@
 package com.autohub.agency.service;
 
+import com.autohub.agency.entity.BodyType;
+import com.autohub.agency.entity.Branch;
+import com.autohub.agency.entity.Car;
+import com.autohub.agency.entity.CarStatus;
 import com.autohub.agency.mapper.CarMapper;
 import com.autohub.agency.repository.CarRepository;
 import com.autohub.dto.agency.CarRequest;
@@ -8,10 +12,6 @@ import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.dto.common.CarStatusUpdate;
 import com.autohub.dto.common.CarUpdateDetails;
 import com.autohub.dto.common.UpdateCarsRequest;
-import com.autohub.agency.entity.BodyType;
-import com.autohub.agency.entity.Branch;
-import com.autohub.agency.entity.Car;
-import com.autohub.agency.entity.CarStatus;
 import com.autohub.exception.AutoHubException;
 import com.autohub.exception.AutoHubNotFoundException;
 import com.autohub.exception.AutoHubResponseStatusException;

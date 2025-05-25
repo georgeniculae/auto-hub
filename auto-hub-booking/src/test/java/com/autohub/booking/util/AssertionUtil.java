@@ -1,8 +1,8 @@
 package com.autohub.booking.util;
 
+import com.autohub.booking.entity.Booking;
 import com.autohub.dto.booking.BookingRequest;
 import com.autohub.dto.common.BookingResponse;
-import com.autohub.booking.entity.Booking;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

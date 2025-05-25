@@ -1,12 +1,12 @@
 package com.autohub.agency.mapper;
 
+import com.autohub.agency.entity.Branch;
+import com.autohub.agency.entity.Car;
 import com.autohub.agency.util.AssertionUtil;
 import com.autohub.agency.util.TestUtil;
 import com.autohub.dto.agency.CarRequest;
 import com.autohub.dto.agency.CarResponse;
 import com.autohub.dto.common.AvailableCarInfo;
-import com.autohub.agency.entity.Branch;
-import com.autohub.agency.entity.Car;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

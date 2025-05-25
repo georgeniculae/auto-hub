@@ -3,7 +3,6 @@ package com.autohub.apigateway.cache;
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ConcurrentMap;

@@ -1,14 +1,14 @@
 package com.autohub.agency.mapper;
 
+import com.autohub.agency.entity.BodyType;
+import com.autohub.agency.entity.Branch;
+import com.autohub.agency.entity.Car;
+import com.autohub.agency.entity.CarStatus;
 import com.autohub.dto.agency.BodyCategory;
 import com.autohub.dto.agency.CarRequest;
 import com.autohub.dto.agency.CarResponse;
 import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.dto.common.CarState;
-import com.autohub.agency.entity.BodyType;
-import com.autohub.agency.entity.Branch;
-import com.autohub.agency.entity.Car;
-import com.autohub.agency.entity.CarStatus;
 import com.autohub.exception.AutoHubException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.mapstruct.InjectionStrategy;
