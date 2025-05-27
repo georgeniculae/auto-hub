@@ -39,8 +39,10 @@ public class RequestTraceGatewayFilterFactory extends AbstractGatewayFilterFacto
                 });
     }
 
-    private ServerWebExchange createMutatedServerWebExchange(ServiceIdConfig serviceIdConfig,
-                                                             ServerWebExchange exchange) {
+    private ServerWebExchange createMutatedServerWebExchange(
+            ServiceIdConfig serviceIdConfig,
+            ServerWebExchange exchange
+    ) {
         return exchange.mutate()
                 .request(requestBuilder -> {
                     requestBuilder.header(X_SERVICE_ID, serviceIdConfig.getServiceId());
