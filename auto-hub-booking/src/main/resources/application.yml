@@ -208,7 +208,6 @@ logging:
 
 apikey:
   secret: ${API_KEY_SECRET}
-  machine-role: ${BOOKING_SERVICE_ROLE}
 
 cors:
   mapping: '/**'

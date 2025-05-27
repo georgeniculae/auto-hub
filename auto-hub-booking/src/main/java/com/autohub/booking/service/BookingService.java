@@ -186,9 +186,11 @@ public class BookingService implements RetryListener {
         return bookingRepository.save(processedBooking);
     }
 
-    private Optional<Booking> processBookingWhenCarIsChanged(BookingRequest updatedBookingRequest,
-                                                             long existingCarId,
-                                                             Booking existingBooking) {
+    private Optional<Booking> processBookingWhenCarIsChanged(
+            BookingRequest updatedBookingRequest,
+            long existingCarId,
+            Booking existingBooking
+    ) {
         long newCarId = updatedBookingRequest.carId();
 
         if (existingCarId == newCarId) {

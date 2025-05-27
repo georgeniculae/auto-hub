@@ -12,8 +12,10 @@ import java.io.File;
 public class DebeziumConnectorConfig {
 
     @Bean
-    public io.debezium.config.Configuration debeziumConnector(DatabaseProperties databaseProperties,
-                                                              DebeziumProperties debeziumProperties) {
+    public io.debezium.config.Configuration debeziumConnector(
+            DatabaseProperties databaseProperties,
+            DebeziumProperties debeziumProperties
+    ) {
         try {
             File offsetStorageTempFile = File.createTempFile("offsets_", ".dat");
             File dbHistoryTempFile = File.createTempFile("dbhistory_", ".dat");

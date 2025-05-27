@@ -39,9 +39,11 @@ public class DebeziumListener implements RetryListener {
     private final InvoiceProcessorService invoiceProcessorService;
     private final ObjectMapper objectMapper;
 
-    public DebeziumListener(Configuration connectorConfiguration,
-                            InvoiceProcessorService invoiceProcessorService,
-                            ObjectMapper objectMapper) {
+    public DebeziumListener(
+            Configuration connectorConfiguration,
+            InvoiceProcessorService invoiceProcessorService,
+            ObjectMapper objectMapper
+    ) {
         this.debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect.class))
                 .using(connectorConfiguration.asProperties())
                 .notifying(this::handleChangeEvent)

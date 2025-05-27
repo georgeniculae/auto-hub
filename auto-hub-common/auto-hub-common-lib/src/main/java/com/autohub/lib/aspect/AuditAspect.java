@@ -53,9 +53,11 @@ public class AuditAspect {
         }
     }
 
-    private List<String> getParametersValues(ProceedingJoinPoint joinPoint,
-                                             LogActivity logActivity,
-                                             MethodSignature signature) {
+    private List<String> getParametersValues(
+            ProceedingJoinPoint joinPoint,
+            LogActivity logActivity,
+            MethodSignature signature
+    ) {
         return Optional.ofNullable(logActivity)
                 .stream()
                 .flatMap(activity -> Stream.of(activity.sentParameters()))

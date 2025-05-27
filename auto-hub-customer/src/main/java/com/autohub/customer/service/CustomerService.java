@@ -172,8 +172,11 @@ public class CustomerService implements RetryListener {
         }
     }
 
-    private RegistrationResponse getRegistrationResponse(UserRepresentation userRepresentation, Response response,
-                                                         RegisterRequest request) {
+    private RegistrationResponse getRegistrationResponse(
+            UserRepresentation userRepresentation,
+            Response response,
+            RegisterRequest request
+    ) {
         String createdId = CreatedResponseUtil.getCreatedId(response);
         UserResource userResource = findById(createdId);
         createRoleUserIfNonexistent();

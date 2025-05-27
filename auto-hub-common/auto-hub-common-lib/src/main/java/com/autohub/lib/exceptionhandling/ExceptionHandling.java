@@ -34,8 +34,10 @@ public class ExceptionHandling extends DefaultErrorAttributes {
     }
 
     @ExceptionHandler(AutoHubNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleAutoHubNotFoundException(AutoHubNotFoundException e,
-                                                                              WebRequest request) {
+    public ResponseEntity<Map<String, Object>> handleAutoHubNotFoundException(
+            AutoHubNotFoundException e,
+            WebRequest request
+    ) {
         HttpStatus notFound = HttpStatus.NOT_FOUND;
         String cause = "Resource not found";
         Map<String, Object> errorAttributes = getErrorAttributesMap(request, e.getReason(), cause, notFound);
@@ -44,8 +46,10 @@ public class ExceptionHandling extends DefaultErrorAttributes {
     }
 
     @ExceptionHandler(AutoHubException.class)
-    public ResponseEntity<Map<String, Object>> handleAutoHubException(AutoHubException e,
-                                                                      WebRequest request) {
+    public ResponseEntity<Map<String, Object>> handleAutoHubException(
+            AutoHubException e,
+            WebRequest request
+    ) {
         HttpStatus internalServerError = HttpStatus.INTERNAL_SERVER_ERROR;
 
         Map<String, Object> errorAttributes =
@@ -55,8 +59,10 @@ public class ExceptionHandling extends DefaultErrorAttributes {
     }
 
     @ExceptionHandler(AutoHubResponseStatusException.class)
-    public ResponseEntity<Map<String, Object>> handleAutoHubResponseStatusException(AutoHubResponseStatusException e,
-                                                                                    WebRequest request) {
+    public ResponseEntity<Map<String, Object>> handleAutoHubResponseStatusException(
+            AutoHubResponseStatusException e,
+            WebRequest request
+    ) {
         HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
         Map<String, Object> errorAttributes = getErrorAttributesMap(request, e.getReason(), e.getReason(), status);
 
@@ -93,10 +99,12 @@ public class ExceptionHandling extends DefaultErrorAttributes {
         return e.getMessage();
     }
 
-    private Map<String, Object> getErrorAttributesMap(WebRequest webRequest,
-                                                      String errorMessage,
-                                                      String cause,
-                                                      HttpStatus httpStatus) {
+    private Map<String, Object> getErrorAttributesMap(
+            WebRequest webRequest,
+            String errorMessage,
+            String cause,
+            HttpStatus httpStatus
+    ) {
         Map<String, Object> errorAttributes = super.getErrorAttributes(webRequest, ErrorAttributeOptions.defaults());
 
         errorAttributes.put(Constants.MESSAGE, errorMessage);

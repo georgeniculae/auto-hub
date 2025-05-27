@@ -41,11 +41,13 @@ public class DebeziumListener implements RetryListener {
     private final UpdatedBookingProcessorService updatedBookingProcessorService;
     private final DeletedBookingProcessorService deletedBookingProcessorService;
 
-    public DebeziumListener(Configuration connectorConfiguration,
-                            ObjectMapper objectMapper,
-                            CreatedBookingProcessorService createdBookingProcessorService,
-                            UpdatedBookingProcessorService updatedBookingProcessorService,
-                            DeletedBookingProcessorService deletedBookingProcessorService) {
+    public DebeziumListener(
+            Configuration connectorConfiguration,
+            ObjectMapper objectMapper,
+            CreatedBookingProcessorService createdBookingProcessorService,
+            UpdatedBookingProcessorService updatedBookingProcessorService,
+            DeletedBookingProcessorService deletedBookingProcessorService
+    ) {
         this.debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect.class))
                 .using(connectorConfiguration.asProperties())
                 .notifying(this::handleChangeEvent)

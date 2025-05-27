@@ -193,10 +193,12 @@ public class InvoiceService implements RetryListener {
         return Period.between(bookingDateFrom, bookingDateTo).getDays();
     }
 
-    private BigDecimal getAmountForLateReturn(LocalDate carReturnDate,
-                                              LocalDate bookingDateTo,
-                                              LocalDate bookingDateFrom,
-                                              BigDecimal carAmount) {
+    private BigDecimal getAmountForLateReturn(
+            LocalDate carReturnDate,
+            LocalDate bookingDateTo,
+            LocalDate bookingDateFrom,
+            BigDecimal carAmount
+    ) {
         return carAmount.multiply(BigDecimal.valueOf(getDaysPeriod(bookingDateFrom, bookingDateTo)))
                 .add(BigDecimal.valueOf(getDaysPeriod(bookingDateTo, carReturnDate)).multiply(BigDecimal.valueOf(2)).multiply(carAmount));
     }
