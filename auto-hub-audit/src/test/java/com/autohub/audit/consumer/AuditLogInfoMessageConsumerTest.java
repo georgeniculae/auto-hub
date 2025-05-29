@@ -8,31 +8,38 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.support.GenericMessage;
+import org.springframework.messaging.support.MessageBuilder;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
-class BookingBookingAuditLogInfoMessageConsumerTest {
+class AuditLogInfoMessageConsumerTest {
 
     @InjectMocks
-    private BookingAuditLogInfoMessageConsumer bookingAuditLogInfoMessageConsumer;
+    private AuditLogInfoMessageConsumer auditLogInfoMessageConsumer;
 
     @Mock
     private AuditLogInfoService auditLogInfoService;
+
+    @Mock
+    private Acknowledgment acknowledgment;
 
     @Test
     void bookingAuditInfoConsumerTest_success() {
         AuditLogInfoRequest auditLogInfoRequest =
                 TestUtil.getResourceAsJson("/data/AuditLogInfoRequest.json", AuditLogInfoRequest.class);
 
-        Message<AuditLogInfoRequest> message = new GenericMessage<>(auditLogInfoRequest);
+        Message<AuditLogInfoRequest> message = MessageBuilder.withPayload(auditLogInfoRequest)
+                .setHeader(KafkaHeaders.ACKNOWLEDGMENT, acknowledgment)
+                .build();
 
-        doNothing().when(auditLogInfoService).saveBookingAuditLogInfo(any(AuditLogInfoRequest.class));
+        doNothing().when(auditLogInfoService).saveAuditLogInfo(any(AuditLogInfoRequest.class));
 
-        bookingAuditLogInfoMessageConsumer.bookingAuditInfoConsumer().accept(message);
+        auditLogInfoMessageConsumer.auditInfoConsumer().accept(message);
     }
 
 }

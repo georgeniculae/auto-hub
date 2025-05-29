@@ -36,7 +36,7 @@ spring:
       defaultBinder: kafka
       bindings:
         auditLogInfoProducer-out-0:
-          destination: ${CUSTOMER_AUDIT_LOG_INFO_TOPIC}
+          destination: ${AUDIT_LOG_INFO_TOPIC}
           contentType: application/json
         usernameProducer-out-0:
           destination: ${USERNAME_TOPIC}

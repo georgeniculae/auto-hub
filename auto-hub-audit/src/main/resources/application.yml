@@ -44,25 +44,20 @@ spring:
         hostname: localhost
         failFast: false
     function:
-      definition: bookingAuditInfoConsumer;customerAuditInfoConsumer;expenseAuditInfoConsumer
+      definition: auditInfoConsumer
     stream:
       defaultBinder: kafka
       bindings:
-        bookingAuditInfoConsumer-in-0:
+        auditInfoConsumer-in-0:
           binder: kafka
-          destination: ${BOOKING_AUDIT_LOG_INFO_TOPIC}
+          destination: ${AUDIT_LOG_INFO_TOPIC}
           contentType: application/json
           group: ${AUDIT_CONSUMER_GROUP}
-        customerAuditInfoConsumer-in-0:
-          binder: kafka
-          destination: ${CUSTOMER_AUDIT_LOG_INFO_TOPIC}
-          contentType: application/json
-          group: ${AUDIT_CONSUMER_GROUP}
-        expenseAuditInfoConsumer-in-0:
-          binder: kafka
-          destination: ${EXPENSE_AUDIT_LOG_INFO_TOPIC}
-          contentType: application/json
-          group: ${AUDIT_CONSUMER_GROUP}
+          consumer:
+            default-retryable: true
+            max-attempts: 3
+            back-off-max-interval: 10000
+            back-off-multiplier: 1.0
       kafka:
         binder:
           auto-create-topics: true
@@ -71,6 +66,10 @@ spring:
             key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
             value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
             allow.auto.create.topics: true
+        bindings:
+          auditInfoConsumer-in-0:
+            consumer:
+              ack-mode: MANUAL_IMMEDIATE
   kafka:
     bootstrap-servers: localhost:9092
     listener:

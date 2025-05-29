@@ -1,5 +1,15 @@
 {
   "methodName": "testMethod",
   "username": "user",
-  "parametersValues": []
+  "activityDescription": "Update booking",
+  "parameters": [
+    {
+      "parameterName": "param1",
+      "parameterValue": "value1"
+    },
+    {
+      "parameterName": "param2",
+      "parameterValue": "value2"
+    }
+  ]
 }

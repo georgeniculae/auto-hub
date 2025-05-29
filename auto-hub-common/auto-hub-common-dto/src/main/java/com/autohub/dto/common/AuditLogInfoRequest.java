@@ -12,22 +12,25 @@ public record AuditLogInfoRequest(
         @NotEmpty(message = "Method name cannot be empty")
         String methodName,
 
+        @NotEmpty(message = "Activity description cannot be empty")
+        String activityDescription,
+
         String username,
 
         @NotNull(message = "Timestamp cannot be null")
         LocalDateTime timestamp,
 
-        List<String> parametersValues
+        List<ParameterInfo> parameters
 ) {
 
     @Override
     public String toString() {
-        return "AuditLogInfoRequest{" + "\n" +
-                "methodName=" + methodName + "\n" +
-                "username=" + username + "\n" +
-                "timestamp=" + timestamp + "\n" +
-                "parametersValues=" + parametersValues + "\n" +
-                "}";
+        return "AuditLogInfoRequest{" +
+                "methodName='" + methodName + '\'' +
+                ", username='" + username + '\'' +
+                ", timestamp=" + timestamp +
+                ", parameters=" + parameters +
+                '}';
     }
 
 }

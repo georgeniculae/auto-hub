@@ -4,7 +4,6 @@ import com.autohub.exception.AutoHubException;
 import com.autohub.exception.AutoHubNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
@@ -16,7 +15,7 @@ import java.nio.file.Paths;
 @UtilityClass
 public class TestUtil {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public static <T> T getResourceAsJson(String resourceName, Class<T> valueType) {
         try {

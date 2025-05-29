@@ -1,6 +1,6 @@
 package com.autohub.audit.mapper;
 
-import com.autohub.audit.entity.BookingAuditLogInfo;
+import com.autohub.audit.entity.AuditLogInfo;
 import com.autohub.audit.util.AssertionUtil;
 import com.autohub.audit.util.TestUtil;
 import com.autohub.dto.common.AuditLogInfoRequest;
@@ -10,7 +10,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class BookingAuditLogInfoMapperTest {
+class AuditLogInfoMapperTest {
 
     @Spy
     private AuditLogInfoMapper auditLogInfoMapper = new AuditLogInfoMapperImpl();
@@ -20,9 +20,9 @@ class BookingAuditLogInfoMapperTest {
         AuditLogInfoRequest auditLogInfoRequest =
                 TestUtil.getResourceAsJson("/data/AuditLogInfoRequest.json", AuditLogInfoRequest.class);
 
-        BookingAuditLogInfo bookingAuditLogInfo = auditLogInfoMapper.mapDtoToBookingEntity(auditLogInfoRequest);
+        AuditLogInfo auditLogInfo = auditLogInfoMapper.mapDtoToBookingEntity(auditLogInfoRequest);
 
-        AssertionUtil.assertAuditLogInfo(auditLogInfoRequest, bookingAuditLogInfo);
+        AssertionUtil.assertAuditLogInfo(auditLogInfoRequest, auditLogInfo);
     }
 
 }

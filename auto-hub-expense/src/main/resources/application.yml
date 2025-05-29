@@ -54,7 +54,7 @@ spring:
       defaultBinder: kafka
       bindings:
         auditLogInfoProducer-out-0:
-          destination: ${EXPENSE_AUDIT_LOG_INFO_TOPIC}
+          destination: ${AUDIT_LOG_INFO_TOPIC}
           contentType: application/json
         bookingUpdateProducer-out-0:
           destination: ${BOOKING_UPDATE_TOPIC}
