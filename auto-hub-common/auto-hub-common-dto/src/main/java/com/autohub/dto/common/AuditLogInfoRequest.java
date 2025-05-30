@@ -27,6 +27,7 @@ public record AuditLogInfoRequest(
     public String toString() {
         return "AuditLogInfoRequest{" +
                 "methodName='" + methodName + '\'' +
+                ", activityDescription='" + activityDescription + '\'' +
                 ", username='" + username + '\'' +
                 ", timestamp=" + timestamp +
                 ", parameters=" + parameters +
