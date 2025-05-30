@@ -12,7 +12,7 @@ public class ChatClientConfig {
 
     @Bean
     public OllamaApi ollamaApi() {
-        return new OllamaApi();
+        return OllamaApi.builder().build();
     }
 
     @Bean
