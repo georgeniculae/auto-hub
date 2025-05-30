@@ -1,8 +1,12 @@
 package com.autohub.booking.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -25,7 +29,12 @@ import java.time.LocalDate;
 @Builder
 @Getter
 @Setter
-public class Booking extends BaseEntity {
+public class Booking {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, unique = true)
+    protected Long id;
 
     @NotNull(message = "Date of booking cannot be null")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
