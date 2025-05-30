@@ -177,6 +177,7 @@ public class BookingService implements RetryListener {
         existingBooking.setAmount(getAmount(updatedBookingRequest, existingBooking.getRentalCarPrice()));
         existingBooking.setDateFrom(updatedBookingRequest.dateFrom());
         existingBooking.setDateTo(updatedBookingRequest.dateTo());
+        existingBooking.setUpdated(true);
 
         Optional<Booking> bookingWithChangedCar =
                 processBookingWhenCarIsChanged(updatedBookingRequest, existingCarId, existingBooking);

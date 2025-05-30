@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS public.booking
     rental_car_price  DECIMAL                                 NOT NULL,
     rental_branch_id  BIGINT                                  NOT NULL,
     return_branch_id  BIGINT,
+    is_updated        BOOLEAN                                 NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_booking PRIMARY KEY (id)
 );
 

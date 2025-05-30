@@ -113,7 +113,7 @@ public class DebeziumListener implements RetryListener {
             return;
         }
 
-        if (isUpdated(operation)) {
+        if (isUpdated(operation, booking.isUpdated())) {
             updatedBookingProcessorService.handleBookingUpdate(booking);
 
             return;
@@ -136,8 +136,8 @@ public class DebeziumListener implements RetryListener {
         return Operation.CREATE.equals(operation);
     }
 
-    private boolean isUpdated(Operation operation) {
-        return Operation.UPDATE.equals(operation);
+    private boolean isUpdated(Operation operation, boolean isUpdated) {
+        return Operation.UPDATE.equals(operation) && isUpdated;
     }
 
     private boolean isDeleted(Operation operation) {

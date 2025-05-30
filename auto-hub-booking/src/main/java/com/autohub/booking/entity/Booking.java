@@ -66,4 +66,6 @@ public class Booking extends BaseEntity {
 
     private Long returnBranchId;
 
+    private boolean isUpdated;
+
 }
