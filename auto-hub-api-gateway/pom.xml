@@ -47,7 +47,7 @@
 
         <dependency>
             <groupId>com.atlassian.oai</groupId>
-            <artifactId>swagger-request-validator-spring-web-client</artifactId>
+            <artifactId>swagger-request-validator-core</artifactId>
         </dependency>
 
         <dependency>
