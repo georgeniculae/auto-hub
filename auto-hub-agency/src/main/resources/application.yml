@@ -14,8 +14,6 @@ spring:
   threads:
     virtual:
       enabled: true
-  codec:
-    max-in-memory-size: 20MB
   datasource:
     url: jdbc:p6spy:postgresql://localhost:5432/auto_hub_agency
     username: ${POSTGRESQL_USERNAME}
@@ -121,6 +119,9 @@ spring:
   docker:
     compose:
       enabled: false
+  http:
+    codecs:
+      max-in-memory-size: 20MB
 
 springdoc:
   swagger-ui:

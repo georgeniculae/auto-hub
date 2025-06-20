@@ -100,9 +100,9 @@ spring:
                   args:
                     name: fallbackHandler
                     fallbackUri: forward:/fallback
-    http:
-      codec:
-        max-in-memory-size: 20MB
+  http:
+    codecs:
+      max-in-memory-size: 20MB
 
 resilience4j:
   circuitbreaker:

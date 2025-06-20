@@ -1,6 +1,8 @@
 package com.autohub.apigateway.scheduler;
 
+import com.autohub.apigateway.cache.CacheUpdateService;
 import com.autohub.apigateway.cache.OpenApiCache;
+import com.autohub.apigateway.config.TestConfig;
 import com.autohub.apigateway.config.property.RegisteredEndpoints;
 import com.autohub.apigateway.retry.RetryHandler;
 import com.autohub.apigateway.util.TestUtil;
@@ -11,7 +13,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -25,8 +26,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@TestPropertySource(properties = "spring.cloud.consul.enabled=false")
+@SpringBootTest(classes = {
+        CacheUpdateScheduler.class,
+        CacheUpdateService.class,
+        OpenApiCache.class,
+        TestConfig.class
+})
 class CacheUpdateSchedulerTest {
 
     private static String agencyContent;
