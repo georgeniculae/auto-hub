@@ -2,6 +2,9 @@ package com.autohub.customer.util;
 
 public class Constants {
 
+    private Constants() {
+    }
+
     public static final String ADDRESS = "address";
     public static final String DATE_OF_BIRTH = "dateOfBirth";
     public static final String USER = "user";

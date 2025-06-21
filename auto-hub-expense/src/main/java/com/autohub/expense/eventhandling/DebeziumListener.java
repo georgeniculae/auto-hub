@@ -79,7 +79,7 @@ public class DebeziumListener implements RetryListener {
 
             if (Operation.READ != operation) {
                 Map<String, Object> payload = getPayload(operation, sourceRecordChangeValue);
-                notifyCustomer(payload, operation);
+                handleInvoiceSending(payload, operation);
             }
         }
     }
@@ -104,7 +104,7 @@ public class DebeziumListener implements RetryListener {
         return fieldName;
     }
 
-    private void notifyCustomer(Map<String, Object> payload, Operation operation) {
+    private void handleInvoiceSending(Map<String, Object> payload, Operation operation) {
         Invoice invoice = objectMapper.convertValue(payload, Invoice.class);
 
         if (Operation.UPDATE.equals(operation) && ObjectUtils.isNotEmpty(invoice.getTotalAmount())) {

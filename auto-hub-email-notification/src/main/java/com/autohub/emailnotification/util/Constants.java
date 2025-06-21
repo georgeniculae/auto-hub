@@ -2,6 +2,9 @@ package com.autohub.emailnotification.util;
 
 public class Constants {
 
+    private Constants() {
+    }
+
     public static final String CONTENT_TYPE = "text/plain";
     public static final String SUBJECT = "Invoice Notice";
     public static final String ENDPOINT = "mail/send";

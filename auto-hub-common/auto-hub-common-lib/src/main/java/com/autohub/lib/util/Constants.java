@@ -2,6 +2,9 @@ package com.autohub.lib.util;
 
 public class Constants {
 
+    private Constants() {
+    }
+
     public static final String X_API_KEY = "X-API-KEY";
     public static final String X_ROLES = "X-ROLES";
     public static final String X_USERNAME = "X-USERNAME";

@@ -2,6 +2,9 @@ package com.autohub.apigateway.util;
 
 public class Constants {
 
+    private Constants() {
+    }
+
     public static final String ACTUATOR = "actuator";
     public static final String SWAGGER = "swagger";
     public static final String V3 = "v3";
