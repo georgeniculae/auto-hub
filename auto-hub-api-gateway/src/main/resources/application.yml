@@ -47,7 +47,7 @@ spring:
               filters:
                 - name: RequestTrace
                   args:
-                    serviceId: "auto-hub-agency"
+                    serviceId: auto-hub-agency
                 - name: CircuitBreaker
                   args:
                     name: fallbackHandler
@@ -59,7 +59,7 @@ spring:
               filters:
                 - name: RequestTrace
                   args:
-                    serviceId: "auto-hub-ai"
+                    serviceId: auto-hub-ai
                 - name: CircuitBreaker
                   args:
                     name: fallbackHandler
@@ -71,7 +71,7 @@ spring:
               filters:
                 - name: RequestTrace
                   args:
-                    serviceId: "auto-hub-booking"
+                    serviceId: auto-hub-booking
                 - name: CircuitBreaker
                   args:
                     name: fallbackHandler
@@ -83,7 +83,7 @@ spring:
               filters:
                 - name: RequestTrace
                   args:
-                    serviceId: "auto-hub-customer"
+                    serviceId: auto-hub-customer
                 - name: CircuitBreaker
                   args:
                     name: fallbackHandler
@@ -95,7 +95,7 @@ spring:
               filters:
                 - name: RequestTrace
                   args:
-                    serviceId: "auto-hub-expense"
+                    serviceId: auto-hub-expense
                 - name: CircuitBreaker
                   args:
                     name: fallbackHandler
