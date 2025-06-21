@@ -1,16 +1,16 @@
 package com.autohub.apigateway.util;
 
-public interface Constants {
+public class Constants {
 
-    String ACTUATOR = "actuator";
-    String SWAGGER = "swagger";
-    String V3 = "v3";
-    String SWAGGER_PATH = "Swagger path";
-    String SWAGGER_MESSAGE = "Swagger message";
-    String V3_PATH = "v3 path";
-    String V3_MESSAGE = "v3 message";
-    String SEPARATOR_REGEX = "/";
-    String DEFINITION = "definition";
-    String FALLBACK = "fallback";
+    public static final String ACTUATOR = "actuator";
+    public static final String SWAGGER = "swagger";
+    public static final String V3 = "v3";
+    public static final String SWAGGER_PATH = "Swagger path";
+    public static final String SWAGGER_MESSAGE = "Swagger message";
+    public static final String V3_PATH = "v3 path";
+    public static final String V3_MESSAGE = "v3 message";
+    public static final String SEPARATOR_REGEX = "/";
+    public static final String DEFINITION = "definition";
+    public static final String FALLBACK = "fallback";
 
 }

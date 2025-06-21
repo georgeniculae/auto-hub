@@ -1,13 +1,13 @@
 package com.autohub.lib.util;
 
-public interface Constants {
+public class Constants {
 
-    String X_API_KEY = "X-API-KEY";
-    String X_ROLES = "X-ROLES";
-    String X_USERNAME = "X-USERNAME";
-    String X_EMAIL = "X-EMAIL";
-    String MESSAGE = "message";
-    String STATUS = "status";
-    String ERROR = "error";
+    public static final String X_API_KEY = "X-API-KEY";
+    public static final String X_ROLES = "X-ROLES";
+    public static final String X_USERNAME = "X-USERNAME";
+    public static final String X_EMAIL = "X-EMAIL";
+    public static final String MESSAGE = "message";
+    public static final String STATUS = "status";
+    public static final String ERROR = "error";
 
 }
