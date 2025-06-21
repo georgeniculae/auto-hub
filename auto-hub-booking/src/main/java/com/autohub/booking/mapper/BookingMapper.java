@@ -24,6 +24,7 @@ public interface BookingMapper {
     @Mapping(target = "carId", source = "actualCarId")
     BookingResponse mapEntityToDto(Booking booking);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "customerUsername", expression = "java(authenticationInfo.username())")
     @Mapping(target = "customerEmail", expression = "java(authenticationInfo.email())")
     @Mapping(target = "actualCarId", expression = "java(availableCarInfo.id())")
