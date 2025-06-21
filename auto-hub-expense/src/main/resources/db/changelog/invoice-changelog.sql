@@ -21,3 +21,8 @@ CREATE TABLE IF NOT EXISTS public.invoice
     comments                 VARCHAR(255),
     CONSTRAINT pk_invoice PRIMARY KEY (id)
 );
+
+-- changeset George Niculae:2 runInTransaction:false
+ALTER
+    SYSTEM SET wal_level = logical;
+SELECT pg_create_logical_replication_slot('invoice_slot', 'pgoutput');
