@@ -21,5 +21,6 @@ public class DebeziumProperties {
     private String tableName;
     private String schemaName;
     private String slotName;
+    private String groupId;
 
 }

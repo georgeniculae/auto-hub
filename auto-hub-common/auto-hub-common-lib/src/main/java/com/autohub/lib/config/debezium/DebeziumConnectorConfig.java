@@ -43,6 +43,7 @@ public class DebeziumConnectorConfig {
                     .with("topic.prefix", debeziumProperties.getTopicName())
                     .with("publication.name", debeziumProperties.getSlotName())
                     .with("slot.name", debeziumProperties.getSlotName())
+                    .with("group.id", debeziumProperties.getGroupId())
                     .build();
         } catch (Exception e) {
             throw new AutoHubException(e.getMessage());
