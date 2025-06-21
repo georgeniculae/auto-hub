@@ -206,7 +206,7 @@ debezium:
   database-name: auto_hub_expense
   database-host: localhost
   database-port: 5432
-  topic-name: ${DEBEZIUM_EMAIL_NOTIFICATION_TOPIC}
+  topic-name: ${DEBEZIUM_INVOICE_TOPIC}
   table-name: invoice
   schema-name: public
   slot-name: invoice_slot
