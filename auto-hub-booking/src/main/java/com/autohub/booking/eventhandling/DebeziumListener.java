@@ -86,7 +86,6 @@ public class DebeziumListener implements RetryListener {
             if (Operation.READ != operation) {
                 Map<String, Object> payload = getPayload(operation, sourceRecordChangeValue);
                 handleBookingSending(payload, operation);
-
                 log.info("Processed payload: {} with operation: {}", payload, operation.name());
             }
         }
