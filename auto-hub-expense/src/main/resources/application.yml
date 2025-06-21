@@ -201,8 +201,10 @@ logging:
 debezium:
   enabled: true
   connector-name: debezium-expense-postgres-connector
+  connector-class: io.debezium.connector.postgresql.PostgresConnector
+  plugin-name: pgoutput
   server-name: expense-postgres-server
-  server-id: 10183
+  server-id: 10181
   database-name: auto_hub_expense
   database-host: localhost
   database-port: 5432

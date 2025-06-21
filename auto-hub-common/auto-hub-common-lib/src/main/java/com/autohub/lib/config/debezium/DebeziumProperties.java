@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 public class DebeziumProperties {
 
     private String connectorName;
+    private String connectorClass;
+    private String pluginName;
     private String databaseHost;
     private String databaseName;
     private String databasePort;

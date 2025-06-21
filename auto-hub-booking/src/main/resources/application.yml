@@ -222,8 +222,10 @@ rest-client:
 debezium:
   enabled: true
   connector-name: debezium-booking-postgres-connector
+  connector-class: io.debezium.connector.postgresql.PostgresConnector
+  plugin-name: pgoutput
   server-name: booking-postgres-server
-  server-id: 10182
+  server-id: 10181
   database-name: auto_hub_booking
   database-host: localhost
   database-port: 5432
