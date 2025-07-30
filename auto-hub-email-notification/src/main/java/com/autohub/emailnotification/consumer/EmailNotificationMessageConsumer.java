@@ -26,7 +26,7 @@ public class EmailNotificationMessageConsumer {
     private void processMessage(Message<InvoiceResponse> message) {
         userNotificationService.notifyCustomer(message.getPayload());
         KafkaUtil.acknowledgeMessage(message.getHeaders());
-        log.info("Email notification sent");
+        log.info("Email notification processed");
     }
 
 }
