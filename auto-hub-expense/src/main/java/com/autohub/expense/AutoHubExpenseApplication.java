@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 @AutoHubMicroservice
 public class AutoHubExpenseApplication {
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SpringApplication.run(AutoHubExpenseApplication.class, args);
     }
 

@@ -1,10 +1,5 @@
 server:
   port: ${random.int(8089,9090)}
-  error:
-    include-message: always
-    include-binding-errors: never
-    include-stacktrace: never
-    include-exception: false
   servlet:
     context-path: /agency
 
@@ -39,6 +34,8 @@ spring:
       enabled: true
       host: localhost
       port: 8500
+      config:
+        enabled: false
       discovery:
         enabled: true
         prefer-ip-address: true
@@ -122,6 +119,12 @@ spring:
   http:
     codecs:
       max-in-memory-size: 20MB
+  web:
+    error:
+      include-message: always
+      include-binding-errors: never
+      include-stacktrace: never
+      include-exception: false
 
 springdoc:
   swagger-ui:

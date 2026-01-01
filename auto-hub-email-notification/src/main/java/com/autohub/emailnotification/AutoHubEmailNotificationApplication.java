@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 @AutoHubMicroservice
 public class AutoHubEmailNotificationApplication {
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SpringApplication.run(AutoHubEmailNotificationApplication.class, args);
     }
 

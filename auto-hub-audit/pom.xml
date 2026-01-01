@@ -11,7 +11,6 @@
 
     <artifactId>auto-hub-audit</artifactId>
 
-    <version>0.0.1-SNAPSHOT</version>
     <name>Auto Hub Audit</name>
     <description>Auto Hub Audit</description>
 
@@ -85,8 +84,7 @@
 
         <dependency>
             <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-63</artifactId>
-            <version>3.9.10</version>
+            <artifactId>hypersistence-utils-hibernate-71</artifactId>
         </dependency>
 
         <dependency>
@@ -103,7 +101,7 @@
         <!-- Test  -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

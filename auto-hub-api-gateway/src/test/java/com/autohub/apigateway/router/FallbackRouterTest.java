@@ -1,9 +1,13 @@
 package com.autohub.apigateway.router;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import com.autohub.apigateway.handler.FallbackHandler;
+import com.autohub.apigateway.testconfig.TestSecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.webflux.test.autoconfigure.WebFluxTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -17,11 +21,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 @WebFluxTest
 @ContextConfiguration(classes = FallbackRouter.class)
+@Import(TestSecurityConfig.class)
 class FallbackRouterTest {
 
     private static final String FALLBACK_PATH = "/fallback";
