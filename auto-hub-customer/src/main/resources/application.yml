@@ -1,10 +1,5 @@
 server:
-  port: ${random.int(8089,9090)}
-  error:
-    include-message: always
-    include-binding-errors: never
-    include-stacktrace: never
-    include-exception: false
+  port: 0
   servlet:
     context-path: /customers
 
@@ -19,19 +14,6 @@ spring:
       enabled: true
       cache:
         enabled: true
-    consul:
-      enabled: true
-      host: localhost
-      port: 8500
-      discovery:
-        enabled: true
-        prefer-ip-address: true
-        instanceId: ${spring.application.name}-id
-        serviceName: ${spring.application.name}
-        healthCheckPath: /actuator/health
-        healthCheckInterval: 10s
-        hostname: localhost
-        failFast: false
     stream:
       defaultBinder: kafka
       bindings:
@@ -47,6 +29,25 @@ spring:
       keySerializer: org.apache.kafka.common.serialization.StringSerializer
       valueSerializer: org.springframework.kafka.support.serializer.JsonSerializer
       acks: all
+  web:
+    error:
+      include-message: always
+      include-binding-errors: never
+      include-stacktrace: never
+      include-exception: false
+
+eureka:
+  client:
+    enabled: true
+    healthcheck:
+      enabled: true
+    eureka-server-port: 8761
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    proxy-password: ${EUREKA_USER}
+    proxy-user-name: ${EUREKA_PASSWORD}
+  instance:
+    prefer-ip-address: true
 
 springdoc:
   swagger-ui:

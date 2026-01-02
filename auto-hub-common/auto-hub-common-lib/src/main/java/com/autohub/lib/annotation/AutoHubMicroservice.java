@@ -9,8 +9,6 @@ import java.lang.annotation.Target;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
-import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
-import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -21,9 +19,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@SpringBootApplication(exclude = {
-        SecurityAutoConfiguration.class,
-        UserDetailsServiceAutoConfiguration.class
+@SpringBootApplication(excludeName = {
+    "org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration",
+    "org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration"
 })
 @EnableJpaRepositories("com.autohub")
 @ComponentScan(basePackages = {"com.autohub"})

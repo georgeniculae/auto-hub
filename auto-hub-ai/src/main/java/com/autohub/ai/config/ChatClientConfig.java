@@ -1,19 +1,11 @@
 package com.autohub.ai.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@RequiredArgsConstructor
 public class ChatClientConfig {
-
-    @Bean
-    public OllamaApi ollamaApi() {
-        return OllamaApi.builder().build();
-    }
 
     @Bean
     public ChatClient chatClient(ChatClient.Builder chatClientBuilder) {
