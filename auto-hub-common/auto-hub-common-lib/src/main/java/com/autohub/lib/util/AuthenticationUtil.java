@@ -14,7 +14,7 @@ import java.util.List;
 public class AuthenticationUtil {
 
     public static AuthenticationInfo getAuthenticationInfo() {
-        ApiKeyAuthenticationToken principal = AuthenticationUtil.getAuthentication();
+        ApiKeyAuthenticationToken principal = getAuthentication();
         String apikey = principal.getName();
         Collection<GrantedAuthority> authorities = principal.getAuthorities();
         String username = HttpRequestUtil.extractUsername();
