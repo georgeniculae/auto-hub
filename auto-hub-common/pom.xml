@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>auto-hub-common</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Auto Hub Common Parent</name>
