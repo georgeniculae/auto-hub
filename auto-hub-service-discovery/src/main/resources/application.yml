@@ -21,9 +21,10 @@ eureka:
     fetch-registry: false
     healthcheck:
       enabled: true
+    registry-fetch-interval-seconds: 5
   instance:
     hostname: localhost
-    lease-renewal-interval-in-seconds: 30
+    lease-renewal-interval-in-seconds: 10
     status-page-url-path: http://localhost:8761/eureka/info
     health-check-url-path: http://localhost:8761/eureka/health
     secure-port-enabled: true
