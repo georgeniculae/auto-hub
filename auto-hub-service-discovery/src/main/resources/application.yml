@@ -19,9 +19,9 @@ eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
+    registry-fetch-interval-seconds: 5
     healthcheck:
       enabled: true
-    registry-fetch-interval-seconds: 5
   instance:
     hostname: localhost
     lease-renewal-interval-in-seconds: 10
