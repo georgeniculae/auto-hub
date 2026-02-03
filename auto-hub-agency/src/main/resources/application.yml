@@ -93,17 +93,14 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 15MB
-      max-request-size: 15MB
+      max-file-size: 20MB
+      max-request-size: 20MB
   sql:
     init:
       mode: always
   docker:
     compose:
       enabled: false
-  http:
-    codecs:
-      max-in-memory-size: 20MB
   web:
     error:
       include-message: always
