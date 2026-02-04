@@ -16,7 +16,7 @@
     <description>Auto Hub Gateway</description>
 
     <modules>
-        <module>auto-hub-service-discovery</module>
+<!--        <module>auto-hub-service-discovery</module>-->
         <module>auto-hub-api-gateway</module>
     </modules>
 
