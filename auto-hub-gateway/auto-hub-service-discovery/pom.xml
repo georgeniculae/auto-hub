@@ -11,7 +11,7 @@
 
     <artifactId>auto-hub-service-discovery</artifactId>
 
-    <name>Auto Hub Eureka Service Discovery</name>
+    <name>Auto Hub Service Discovery</name>
     <description>Auto Hub Eureka Service Discovery</description>
 
     <dependencies>
