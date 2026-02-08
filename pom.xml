@@ -31,7 +31,7 @@
     <repositories>
         <repository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/georgeniculae/auto-hub</url>
+            <url>https://maven.pkg.github.com/georgeniculae/*</url>
         </repository>
     </repositories>
 
