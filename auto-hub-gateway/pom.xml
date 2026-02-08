@@ -12,11 +12,11 @@
     <artifactId>auto-hub-gateway</artifactId>
     <packaging>pom</packaging>
 
-    <name>Auto Hub Gateway</name>
-    <description>Auto Hub Gateway</description>
+    <name>Auto Hub Gateway Parent</name>
+    <description>Auto Hub Gateway Parent</description>
 
     <modules>
-<!--        <module>auto-hub-eureka-service-discovery</module>-->
+        <module>auto-hub-eureka-service-discovery\</module>
         <module>auto-hub-api-gateway</module>
     </modules>
 
