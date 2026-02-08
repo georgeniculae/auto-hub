@@ -18,6 +18,7 @@
 
     <modules>
         <module>auto-hub-common</module>
+        <module>auto-hub-gateway/auto-hub-eureka-service-discovery</module>
         <module>auto-hub-gateway</module>
         <module>auto-hub-agency</module>
         <module>auto-hub-ai</module>
