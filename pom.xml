@@ -44,7 +44,7 @@
         <repository>
             <id>github</id>
             <name>auto-hub</name>
-            <url>https://maven.pkg.github.com/georgeniculae/auto-hub</url>
+            <url>https://maven.pkg.github.com/georgeniculae/auto-hub-parent</url>
         </repository>
     </distributionManagement>
 
