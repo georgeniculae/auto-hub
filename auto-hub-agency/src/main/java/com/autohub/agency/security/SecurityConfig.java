@@ -25,7 +25,7 @@ public class SecurityConfig {
     private final AuthenticationFilter authenticationFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         return http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -33,7 +33,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         request -> request.requestMatchers(
                                         "/definition/**",
-                                        "/actuator/**"
+                                        "/actuator/**",
+                                        "/cars/available"
                                 )
                                 .permitAll()
                                 .anyRequest()

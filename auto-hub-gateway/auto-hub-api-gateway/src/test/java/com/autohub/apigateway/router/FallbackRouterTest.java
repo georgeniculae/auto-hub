@@ -58,6 +58,29 @@ class FallbackRouterTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
+    void routeFallbackTest_postSuccess() {
+        String serviceUnavailableMessage = "Service unavailable";
+        Mono<ServerResponse> serverResponse = ServerResponse.ok().bodyValue(serviceUnavailableMessage);
+
+        when(fallbackHandler.fallback(any(ServerRequest.class))).thenReturn(serverResponse);
+
+        Flux<String> responseBody = webTestClient.mutateWith(SecurityMockServerConfigurers.csrf())
+                .post()
+                .uri(FALLBACK_PATH)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .returnResult(String.class)
+                .getResponseBody();
+
+        responseBody.as(StepVerifier::create)
+                .expectNext(serviceUnavailableMessage)
+                .verifyComplete();
+    }
+
+    @Test
     @WithAnonymousUser
     void routeFallbackTest_unauthorized() {
         String serviceUnavailableMessage = "Service unavailable";

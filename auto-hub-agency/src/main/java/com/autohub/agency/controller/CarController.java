@@ -38,7 +38,6 @@ public class CarController {
     }
 
     @GetMapping(path = "/available")
-    @PreAuthorize("hasRole('user')")
     public ResponseEntity<List<CarResponse>> findAllAvailableCars() {
         List<CarResponse> carResponses = carService.findAllAvailableCars();
 
@@ -47,7 +46,7 @@ public class CarController {
 
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<CarResponse> findCarById(@PathVariable("id") Long id) {
+    public ResponseEntity<CarResponse> findCarById(@PathVariable Long id) {
         CarResponse carResponse = carService.findCarById(id);
 
         return ResponseEntity.ok(carResponse);
@@ -55,7 +54,7 @@ public class CarController {
 
     @GetMapping(path = "/make/{make}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<List<CarResponse>> findCarsByMake(@PathVariable("make") String make) {
+    public ResponseEntity<List<CarResponse>> findCarsByMake(@PathVariable String make) {
         List<CarResponse> carResponses = carService.findCarsByMake(make);
 
         return ResponseEntity.ok(carResponses);
@@ -63,7 +62,7 @@ public class CarController {
 
     @GetMapping(path = "/filter/{filter}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<List<CarResponse>> findCarsByFilter(@PathVariable("filter") String filter) {
+    public ResponseEntity<List<CarResponse>> findCarsByFilter(@PathVariable String filter) {
         List<CarResponse> carResponses = carService.findCarsByFilter(filter);
 
         return ResponseEntity.ok(carResponses);
@@ -71,7 +70,7 @@ public class CarController {
 
     @GetMapping(path = "/{id}/availability")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<AvailableCarInfo> findCarsByFilter(@PathVariable("id") Long id) {
+    public ResponseEntity<AvailableCarInfo> findCarsByFilter(@PathVariable Long id) {
         AvailableCarInfo availableCarInfo = carService.findAvailableCar(id);
 
         return ResponseEntity.ok(availableCarInfo);
@@ -79,7 +78,7 @@ public class CarController {
 
     @GetMapping(path = "/{id}/image")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<byte[]> findCarImage(@PathVariable("id") Long id) {
+    public ResponseEntity<byte[]> findCarImage(@PathVariable Long id) {
         byte[] carImage = carService.getCarImage(id);
 
         return ResponseEntity.ok(carImage);
@@ -112,9 +111,11 @@ public class CarController {
 
     @PutMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<CarResponse> updateCar(@PathVariable("id") Long id,
-                                                 @RequestPart @Validated CarRequest carRequest,
-                                                 @RequestPart MultipartFile image) {
+    public ResponseEntity<CarResponse> updateCar(
+            @PathVariable Long id,
+            @RequestPart @Validated CarRequest carRequest,
+            @RequestPart MultipartFile image
+    ) {
         CarResponse updatedCarResponse = carService.updateCar(id, carRequest, image);
 
         return ResponseEntity.ok(updatedCarResponse);
@@ -122,7 +123,7 @@ public class CarController {
 
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<Void> deleteCarById(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteCarById(@PathVariable Long id) {
         carService.deleteCarById(id);
 
         return ResponseEntity.noContent().build();

@@ -82,6 +82,18 @@ spring:
                   args:
                     name: fallbackHandler
                     fallbackUri: forward:/fallback
+            - id: mcp
+              uri: lb://auto-hub-mcp
+              predicates:
+                - Path=/mcp/**
+              filters:
+                - name: RequestTrace
+                  args:
+                    serviceId: auto-hub-mcp
+                - name: CircuitBreaker
+                  args:
+                    name: fallbackHandler
+                    fallbackUri: forward:/fallback
   http:
     codecs:
       max-in-memory-size: 20MB

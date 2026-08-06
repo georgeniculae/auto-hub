@@ -27,7 +27,14 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true, value = "branches")
 public class RentalOffice extends BaseEntity {
 
-    @OneToMany(mappedBy = "rentalOffice", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "rentalOffice",
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.REMOVE
+            },
+            fetch = FetchType.LAZY
+    )
     @JsonIgnore
     @Builder.Default
     private List<Branch> branches = new ArrayList<>();

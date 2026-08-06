@@ -35,7 +35,7 @@ public class RentalOfficeController {
 
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<RentalOfficeResponse> findRentalOfficeById(@PathVariable("id") Long id) {
+    public ResponseEntity<RentalOfficeResponse> findRentalOfficeById(@PathVariable Long id) {
         RentalOfficeResponse rentalOfficeResponse = rentalOfficeService.findRentalOfficeById(id);
 
         return ResponseEntity.ok(rentalOfficeResponse);
@@ -43,7 +43,7 @@ public class RentalOfficeController {
 
     @GetMapping(path = "/filter/{filter}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<List<RentalOfficeResponse>> findRentalOfficesByFilter(@PathVariable("filter") String filter) {
+    public ResponseEntity<List<RentalOfficeResponse>> findRentalOfficesByFilter(@PathVariable String filter) {
         List<RentalOfficeResponse> rentalOfficeResponses = rentalOfficeService.findRentalOfficeByFilter(filter);
 
         return ResponseEntity.ok(rentalOfficeResponses);
@@ -67,8 +67,10 @@ public class RentalOfficeController {
 
     @PutMapping(path = "/{id}")
     @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<RentalOfficeResponse> updateRentalOffice(@PathVariable("id") Long id,
-                                                                   @RequestBody @Validated RentalOfficeRequest rentalOfficeRequest) {
+    public ResponseEntity<RentalOfficeResponse> updateRentalOffice(
+            @PathVariable Long id,
+            @RequestBody @Validated RentalOfficeRequest rentalOfficeRequest
+    ) {
         RentalOfficeResponse updatedRentalOfficeResponse = rentalOfficeService.updateRentalOffice(id, rentalOfficeRequest);
 
         return ResponseEntity.ok(updatedRentalOfficeResponse);
@@ -76,7 +78,7 @@ public class RentalOfficeController {
 
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<Void> deleteRentalOfficeById(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteRentalOfficeById(@PathVariable Long id) {
         rentalOfficeService.deleteRentalOfficeById(id);
 
         return ResponseEntity.noContent().build();

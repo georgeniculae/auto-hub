@@ -13,7 +13,7 @@ public class FallbackRouter {
 
     @Bean
     public RouterFunction<ServerResponse> routeFallback(FallbackHandler fallbackHandler) {
-        return RouterFunctions.route(RequestPredicates.GET("/fallback"), fallbackHandler::fallback);
+        return RouterFunctions.route(RequestPredicates.path("/fallback"), fallbackHandler::fallback);
     }
 
 }

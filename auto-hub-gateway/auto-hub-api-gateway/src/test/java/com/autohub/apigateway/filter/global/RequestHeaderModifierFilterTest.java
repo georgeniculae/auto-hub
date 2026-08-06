@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
@@ -24,8 +25,11 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -115,6 +119,58 @@ class RequestHeaderModifierFilterTest {
                 .as(StepVerifier::create)
                 .expectComplete()
                 .verify();
+    }
+
+    @Test
+    void filterTest_availableCarsPath_noAuthorizationRequired() {
+        MockServerHttpRequest request = MockServerHttpRequest.get("/agency/cars/available")
+                .accept(MediaType.APPLICATION_JSON)
+                .build();
+        ServerWebExchange exchange = MockServerWebExchange.builder(request).build();
+
+        when(chain.filter(any(ServerWebExchange.class))).thenReturn(Mono.empty());
+
+        requestHeaderModifierFilter.filter(exchange, chain)
+                .as(StepVerifier::create)
+                .expectComplete()
+                .verify();
+
+        verify(chain).filter(exchange);
+        verifyNoInteractions(nimbusReactiveJwtDecoder);
+    }
+
+    @Test
+    void filterTest_mcpPath_noAuthorizationRequired() {
+        MockServerHttpRequest request = MockServerHttpRequest.post("/mcp")
+                .accept(MediaType.APPLICATION_JSON)
+                .build();
+        ServerWebExchange exchange = MockServerWebExchange.builder(request).build();
+
+        when(chain.filter(any(ServerWebExchange.class))).thenReturn(Mono.empty());
+
+        requestHeaderModifierFilter.filter(exchange, chain)
+                .as(StepVerifier::create)
+                .expectComplete()
+                .verify();
+
+        verify(chain).filter(exchange);
+        verifyNoInteractions(nimbusReactiveJwtDecoder);
+    }
+
+    @Test
+    void filterTest_carAvailabilityPath_stillRequiresAuthorization() {
+        MockServerHttpRequest request = MockServerHttpRequest.get("/agency/cars/{id}/availability", 1L)
+                .accept(MediaType.APPLICATION_JSON)
+                .build();
+        ServerWebExchange exchange = MockServerWebExchange.builder(request).build();
+
+        requestHeaderModifierFilter.filter(exchange, chain)
+                .as(StepVerifier::create)
+                .expectComplete()
+                .verify();
+
+        assertEquals(HttpStatus.BAD_REQUEST, exchange.getResponse().getStatusCode());
+        verifyNoInteractions(chain);
     }
 
 }

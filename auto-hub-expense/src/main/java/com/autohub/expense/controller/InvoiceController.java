@@ -42,7 +42,7 @@ public class InvoiceController {
 
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<InvoiceResponse> findInvoiceById(@PathVariable("id") Long id) {
+    public ResponseEntity<InvoiceResponse> findInvoiceById(@PathVariable Long id) {
         InvoiceResponse invoiceResponse = invoiceService.findInvoiceById(id);
 
         return ResponseEntity.ok(invoiceResponse);
@@ -50,7 +50,7 @@ public class InvoiceController {
 
     @GetMapping(path = "/by-customer/{customerUsername}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<List<InvoiceResponse>> findAllInvoicesByCustomerId(@PathVariable("customerUsername") String customerUsername) {
+    public ResponseEntity<List<InvoiceResponse>> findAllInvoicesByCustomerId(@PathVariable String customerUsername) {
         List<InvoiceResponse> allInvoiceResponses = invoiceService.findAllInvoicesByCustomerUsername(customerUsername);
 
         return ResponseEntity.ok(allInvoiceResponses);
@@ -78,8 +78,10 @@ public class InvoiceController {
             sentParameters = {"id", "invoiceRequest"},
             activityDescription = "Invoice closing"
     )
-    public ResponseEntity<InvoiceResponse> closeInvoice(@PathVariable("id") Long id,
-                                                        @RequestBody @Validated InvoiceRequest invoiceRequest) {
+    public ResponseEntity<InvoiceResponse> closeInvoice(
+            @PathVariable Long id,
+            @RequestBody @Validated InvoiceRequest invoiceRequest
+    ) {
         InvoiceResponse invoiceResponse = invoiceService.closeInvoice(id, invoiceRequest);
 
         return ResponseEntity.accepted().body(invoiceResponse);

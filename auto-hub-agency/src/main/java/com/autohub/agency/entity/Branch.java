@@ -34,11 +34,18 @@ public class Branch extends BaseEntity {
 
     private String address;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rental_office_id")
     private RentalOffice rentalOffice;
 
-    @OneToMany(mappedBy = "workingBranch", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "workingBranch",
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.REMOVE
+            },
+            fetch = FetchType.LAZY
+    )
     @JsonIgnore
     @Builder.Default
     private List<Employee> employees = new ArrayList<>();

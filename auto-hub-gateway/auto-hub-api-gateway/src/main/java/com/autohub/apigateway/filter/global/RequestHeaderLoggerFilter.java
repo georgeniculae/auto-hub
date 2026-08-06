@@ -2,6 +2,7 @@ package com.autohub.apigateway.filter.global;
 
 import com.autohub.apigateway.exceptionhandling.handler.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -20,7 +21,8 @@ public class RequestHeaderLoggerFilter implements GlobalFilter, Ordered {
     private static final String X_EMAIL = "X-EMAIL";
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    @NonNull
+    public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
         return Mono.just(exchange)
                 .map(webExchange -> webExchange.getRequest().getHeaders())
                 .doOnNext(this::logHeaders)

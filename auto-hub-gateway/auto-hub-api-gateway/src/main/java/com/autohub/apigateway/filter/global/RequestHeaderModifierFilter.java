@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -40,6 +41,8 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     private static final String REGISTER_PATH = "register";
     private static final String DEFINITION_PATH = "definition";
     private static final String FALLBACK = "fallback";
+    private static final String AVAILABLE_CARS_PATH = "/agency/cars/available";
+    private static final String MCP_PATH = "/mcp";
     private final JwtAuthenticationTokenConverter jwtAuthenticationTokenConverter;
     private final NimbusReactiveJwtDecoder nimbusReactiveJwtDecoder;
 
@@ -47,7 +50,8 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     private String apikey;
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    @NonNull
+    public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
         return Mono.just(exchange)
                 .flatMap(serverWebExchange -> forwardRequest(exchange, chain, serverWebExchange))
                 .onErrorResume(e -> {
@@ -77,7 +81,11 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
     private boolean isRequestValidatable(ServerHttpRequest serverHttpRequest) {
         String path = serverHttpRequest.getPath().value();
 
-        return !path.contains(REGISTER_PATH) && !path.contains(DEFINITION_PATH) && !path.contains(FALLBACK);
+        return !path.contains(REGISTER_PATH)
+                && !path.contains(DEFINITION_PATH)
+                && !path.contains(FALLBACK)
+                && !AVAILABLE_CARS_PATH.equals(path)
+                && !(MCP_PATH.equals(path) || path.startsWith(MCP_PATH + "/"));
     }
 
     private Mono<Void> filterValidatedRequest(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -116,7 +124,7 @@ public class RequestHeaderModifierFilter implements GlobalFilter, Ordered {
 
     private Mono<List<String>> getRoles(Jwt jwt) {
         return jwtAuthenticationTokenConverter.extractGrantedAuthorities(jwt)
-                .map(GrantedAuthority::getAuthority)
+                .mapNotNull(GrantedAuthority::getAuthority)
                 .collectList()
                 .switchIfEmpty(Mono.just(List.of()));
     }

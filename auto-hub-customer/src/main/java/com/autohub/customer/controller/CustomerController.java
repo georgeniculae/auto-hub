@@ -42,7 +42,7 @@ public class CustomerController {
 
     @GetMapping(path = "/{username}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<UserInfo> findUserByUsername(@PathVariable("username") String username) {
+    public ResponseEntity<UserInfo> findUserByUsername(@PathVariable String username) {
         return ResponseEntity.ok(customerService.findUserByUsername(username));
     }
 
@@ -61,8 +61,10 @@ public class CustomerController {
             sentParameters = "id",
             activityDescription = "User update"
     )
-    public ResponseEntity<UserInfo> updateUser(@PathVariable("id") String id,
-                                               @RequestBody @Validated UserUpdateRequest userUpdateRequest) {
+    public ResponseEntity<UserInfo> updateUser(
+            @PathVariable String id,
+            @RequestBody @Validated UserUpdateRequest userUpdateRequest
+    ) {
         return ResponseEntity.ok(customerService.updateUser(id, userUpdateRequest));
     }
 
@@ -78,7 +80,7 @@ public class CustomerController {
             sentParameters = "username",
             activityDescription = "User deletion"
     )
-    public ResponseEntity<Void> deleteUserByUsername(@PathVariable("username") String username) {
+    public ResponseEntity<Void> deleteUserByUsername(@PathVariable String username) {
         customerService.deleteUserByUsername(username);
 
         return ResponseEntity.noContent().build();

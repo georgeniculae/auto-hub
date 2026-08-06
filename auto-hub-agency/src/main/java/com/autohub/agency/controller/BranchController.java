@@ -35,7 +35,7 @@ public class BranchController {
 
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<BranchResponse> findBranchById(@PathVariable("id") Long id) {
+    public ResponseEntity<BranchResponse> findBranchById(@PathVariable Long id) {
         BranchResponse branchResponse = branchService.findBranchById(id);
 
         return ResponseEntity.ok(branchResponse);
@@ -43,7 +43,7 @@ public class BranchController {
 
     @GetMapping(path = "/filter/{filter}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<List<BranchResponse>> findBranchesByFilter(@PathVariable("filter") String filter) {
+    public ResponseEntity<List<BranchResponse>> findBranchesByFilter(@PathVariable String filter) {
         List<BranchResponse> branchResponses = branchService.findBranchesByFilter(filter);
 
         return ResponseEntity.ok(branchResponses);
@@ -67,8 +67,10 @@ public class BranchController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<BranchResponse> updateBranch(@PathVariable("id") Long id,
-                                                       @RequestBody @Validated BranchRequest branchRequest) {
+    public ResponseEntity<BranchResponse> updateBranch(
+            @PathVariable Long id,
+            @RequestBody @Validated BranchRequest branchRequest
+    ) {
         BranchResponse updatedBranchResponse = branchService.updateBranch(id, branchRequest);
 
         return ResponseEntity.ok(updatedBranchResponse);
@@ -76,7 +78,7 @@ public class BranchController {
 
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<Void> deleteBranchById(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteBranchById(@PathVariable Long id) {
         branchService.deleteBranchById(id);
 
         return ResponseEntity.noContent().build();

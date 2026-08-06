@@ -34,7 +34,7 @@ public class BookingController {
 
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<BookingResponse> findBookingById(@PathVariable("id") Long id) {
+    public ResponseEntity<BookingResponse> findBookingById(@PathVariable Long id) {
         BookingResponse bookingResponse = bookingService.findBookingById(id);
 
         return ResponseEntity.ok(bookingResponse);
@@ -90,8 +90,10 @@ public class BookingController {
             sentParameters = "bookingRequest",
             activityDescription = "Booking update"
     )
-    public ResponseEntity<BookingResponse> updateBooking(@PathVariable("id") Long id,
-                                                         @RequestBody @Validated BookingRequest bookingRequest) {
+    public ResponseEntity<BookingResponse> updateBooking(
+            @PathVariable Long id,
+            @RequestBody @Validated BookingRequest bookingRequest
+    ) {
         BookingResponse updatedBookingResponse = bookingService.updateBooking(id, bookingRequest);
 
         return ResponseEntity.accepted().body(updatedBookingResponse);

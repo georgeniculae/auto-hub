@@ -39,7 +39,7 @@ public class RevenueController {
 
     @GetMapping(path = "/{date}")
     @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<List<RevenueResponse>> findRevenuesByDate(@PathVariable("date") LocalDate date) {
+    public ResponseEntity<List<RevenueResponse>> findRevenuesByDate(@PathVariable LocalDate date) {
         List<RevenueResponse> revenueResponses = revenueService.findRevenuesByDate(date);
 
         return ResponseEntity.ok(revenueResponses);

@@ -199,21 +199,6 @@ class CarControllerTest {
 
     @Test
     @WithAnonymousUser
-    void findAllAvailableCarsTest_unauthorized() throws Exception {
-        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
-
-        when(carService.findAllAvailableCars()).thenReturn(List.of(carResponse));
-
-        mockMvc.perform(get(PATH + "/available", 1L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn()
-                .getResponse();
-    }
-
-    @Test
-    @WithAnonymousUser
     void findAvailableCarTest_unauthorized() throws Exception {
         AvailableCarInfo availableCarInfo =
                 TestUtil.getResourceAsJson("/data/AvailableCarInfo.json", AvailableCarInfo.class);

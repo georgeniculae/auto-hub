@@ -35,7 +35,7 @@ public class EmployeeController {
 
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<EmployeeResponse> findEmployeeById(@PathVariable("id") Long id) {
+    public ResponseEntity<EmployeeResponse> findEmployeeById(@PathVariable Long id) {
         EmployeeResponse employeeResponse = employeeService.findEmployeeById(id);
 
         return ResponseEntity.ok(employeeResponse);
@@ -43,7 +43,7 @@ public class EmployeeController {
 
     @GetMapping(path = "/branch/{id}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<List<EmployeeResponse>> findEmployeesByBranchId(@PathVariable("id") Long id) {
+    public ResponseEntity<List<EmployeeResponse>> findEmployeesByBranchId(@PathVariable Long id) {
         List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByBranchId(id);
 
         return ResponseEntity.ok(employeeResponses);
@@ -51,7 +51,7 @@ public class EmployeeController {
 
     @GetMapping(path = "/filter/{filter}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<List<EmployeeResponse>> findEmployeesByFilter(@PathVariable("filter") String filter) {
+    public ResponseEntity<List<EmployeeResponse>> findEmployeesByFilter(@PathVariable String filter) {
         List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByFilter(filter);
 
         return ResponseEntity.ok(employeeResponses);
@@ -75,8 +75,10 @@ public class EmployeeController {
 
     @PutMapping(path = "/{id}")
     @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable("id") Long id,
-                                                           @RequestBody @Validated EmployeeRequest employeeRequest) {
+    public ResponseEntity<EmployeeResponse> updateEmployee(
+            @PathVariable Long id,
+            @RequestBody @Validated EmployeeRequest employeeRequest
+    ) {
         EmployeeResponse updatedEmployeeResponse = employeeService.updateEmployee(id, employeeRequest);
 
         return ResponseEntity.ok(updatedEmployeeResponse);
@@ -84,7 +86,7 @@ public class EmployeeController {
 
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<Void> deleteEmployeeById(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteEmployeeById(@PathVariable Long id) {
         employeeService.deleteEmployeeById(id);
 
         return ResponseEntity.noContent().build();
