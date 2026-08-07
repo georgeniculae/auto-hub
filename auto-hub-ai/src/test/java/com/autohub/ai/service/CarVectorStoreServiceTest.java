@@ -5,6 +5,7 @@ import com.autohub.dto.ai.AvailableCarDetails;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -32,25 +33,13 @@ class CarVectorStoreServiceTest {
     @Mock
     private JdbcTemplate jdbcTemplate;
 
-    private static AvailableCarDetails car() {
-        return AvailableCarDetails.builder()
-                .id(1L)
-                .make("Volkswagen")
-                .model("Golf")
-                .bodyCategory(BodyCategory.HATCHBACK)
-                .yearOfProduction(2010)
-                .color("black")
-                .mileage(250000)
-                .amount(BigDecimal.valueOf(500))
-                .carLocation("Ploiesti")
-                .build();
-    }
+    @Captor
+    private ArgumentCaptor<List<Document>> captor;
 
     @Test
     void addCarTest_contentDescribesTheCar() {
         carVectorStoreService.addCar(car());
 
-        ArgumentCaptor<List<Document>> captor = ArgumentCaptor.forClass(List.class);
         verify(vectorStore).add(captor.capture());
 
         assertEquals(
@@ -63,7 +52,6 @@ class CarVectorStoreServiceTest {
     void addCarTest_metadataCarriesTheCarId() {
         carVectorStoreService.addCar(car());
 
-        ArgumentCaptor<List<Document>> captor = ArgumentCaptor.forClass(List.class);
         verify(vectorStore).add(captor.capture());
 
         assertEquals(1L, captor.getValue().getFirst().getMetadata().get("carId"));
@@ -75,6 +63,20 @@ class CarVectorStoreServiceTest {
         carVectorStoreService.deleteAllCars();
 
         verify(jdbcTemplate).update(anyString());
+    }
+
+    private static AvailableCarDetails car() {
+        return AvailableCarDetails.builder()
+                .id(1L)
+                .make("Volkswagen")
+                .model("Golf")
+                .bodyCategory(BodyCategory.HATCHBACK)
+                .yearOfProduction(2010)
+                .color("black")
+                .mileage(250000)
+                .amount(BigDecimal.valueOf(500))
+                .carLocation("Ploiesti")
+                .build();
     }
 
 }
