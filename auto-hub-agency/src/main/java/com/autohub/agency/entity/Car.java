@@ -54,12 +54,12 @@ public class Car extends BaseEntity {
     private BigDecimal amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "original_branch_id")
-    private Branch originalBranch;
+    @JoinColumn(name = "initial_rental_office_id")
+    private RentalOffice initialRentalOffice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "actual_branch_id")
-    private Branch actualBranch;
+    @JoinColumn(name = "actual_rental_office_id")
+    private RentalOffice actualRentalOffice;
 
     @JdbcTypeCode(Types.BINARY)
     private byte[] image;
@@ -78,8 +78,8 @@ public class Car extends BaseEntity {
             Integer mileage,
             CarStatus carStatus,
             BigDecimal amount,
-            Branch originalBranch,
-            Branch actualBranch
+            RentalOffice initialRentalOffice,
+            RentalOffice actualRentalOffice
     ) {
         super(id);
         this.make = make;
@@ -90,8 +90,8 @@ public class Car extends BaseEntity {
         this.mileage = mileage;
         this.carStatus = carStatus;
         this.amount = amount;
-        this.originalBranch = originalBranch;
-        this.actualBranch = actualBranch;
+        this.initialRentalOffice = initialRentalOffice;
+        this.actualRentalOffice = actualRentalOffice;
     }
 
 }

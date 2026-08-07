@@ -23,8 +23,8 @@ public record BookingRequest(
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         LocalDate dateTo,
 
-        @NotNull(message = "Rental branch id cannot be null")
-        Long rentalBranchId
+        @NotNull(message = "Pickup rental office id cannot be null")
+        Long pickupRentalOfficeId
 ) {
 
     @Override
@@ -34,7 +34,7 @@ public record BookingRequest(
                 "previousCarId=" + carId + "\n" +
                 "dateFrom=" + dateFrom + "\n" +
                 "dateTo=" + dateTo + "\n" +
-                "rentalBranchId=" + rentalBranchId + "\n" +
+                "pickupRentalOfficeId=" + pickupRentalOfficeId + "\n" +
                 "}";
     }
 

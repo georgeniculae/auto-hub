@@ -2,8 +2,6 @@ package com.autohub.expense.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -36,23 +34,20 @@ public class Invoice extends BaseEntity {
 
     private Long receptionistEmployeeId;
 
-    private Long returnBranchId;
+    private Long returnRentalOfficeId;
 
     @NotNull(message = "Booking id cannot be null")
     private Long bookingId;
 
     @NotNull(message = "Date from cannot be null")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Temporal(TemporalType.DATE)
     private LocalDate dateFrom;
 
     @NotNull(message = "Date to cannot be null")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Temporal(TemporalType.DATE)
     private LocalDate dateTo;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Temporal(TemporalType.DATE)
     private LocalDate carReturnDate;
 
     private Boolean isVehicleDamaged;

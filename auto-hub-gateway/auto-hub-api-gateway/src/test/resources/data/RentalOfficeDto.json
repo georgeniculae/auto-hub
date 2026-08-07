@@ -1,6 +1,7 @@
 {
   "id": 1,
   "name": "Test Rental Office",
-  "contactAddress": "Ploiesti",
-  "phoneNumber": ""
+  "city": "Ploiesti",
+  "address": "Ploiesti",
+  "branchId": 1
 }

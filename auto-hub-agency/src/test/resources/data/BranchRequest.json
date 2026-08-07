@@ -1,5 +1,6 @@
 {
   "name": "Test Branch",
+  "region": "Ploiesti",
   "address": "Ploiesti",
-  "rentalOfficeId": 1
+  "phoneNumber": "0722222222"
 }

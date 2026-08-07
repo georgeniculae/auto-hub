@@ -1,7 +1,7 @@
 package com.autohub.agency.service;
 
-import com.autohub.agency.entity.Branch;
 import com.autohub.agency.entity.Car;
+import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,18 +28,18 @@ class ExcelParserServiceTest {
     private ExcelParserService excelParserService;
 
     @Mock
-    private BranchService branchService;
+    private RentalOfficeService rentalOfficeService;
 
     @Test
     void extractDataFromExcelTest() throws IOException {
-        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
+        RentalOffice rentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
         File excelFile = new File("src/test/resources/file/Cars.xlsx");
         InputStream stream = new FileInputStream(excelFile);
 
         MockMultipartFile file =
                 new MockMultipartFile("file", excelFile.getName(), MediaType.MULTIPART_FORM_DATA_VALUE, stream);
 
-        when(branchService.findEntityById(anyLong())).thenReturn(branch);
+        when(rentalOfficeService.findEntityById(anyLong())).thenReturn(rentalOffice);
 
         List<Car> cars = excelParserService.extractDataFromExcel(file);
         assertFalse(cars.isEmpty());

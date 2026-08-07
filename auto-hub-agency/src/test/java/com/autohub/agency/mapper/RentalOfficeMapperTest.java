@@ -1,5 +1,6 @@
 package com.autohub.agency.mapper;
 
+import com.autohub.agency.entity.Branch;
 import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.util.AssertionUtil;
 import com.autohub.agency.util.TestUtil;
@@ -36,7 +37,9 @@ class RentalOfficeMapperTest {
     void getNewRentalOfficeTest_success() {
         RentalOfficeRequest rentalOfficeRequest = TestUtil.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
 
-        RentalOffice rentalOffice = rentalOfficeMapper.getNewRentalOffice(rentalOfficeRequest);
+        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
+
+        RentalOffice rentalOffice = rentalOfficeMapper.getNewRentalOffice(rentalOfficeRequest, branch);
 
         assertNotNull(rentalOffice);
         AssertionUtil.assertRentalOfficeRequest(rentalOffice, rentalOfficeRequest);
@@ -44,7 +47,7 @@ class RentalOfficeMapperTest {
 
     @Test
     void getNewRentalOfficeTest_null() {
-        assertNull(rentalOfficeMapper.getNewRentalOffice(null));
+        assertNull(rentalOfficeMapper.getNewRentalOffice(null, null));
     }
 
 }

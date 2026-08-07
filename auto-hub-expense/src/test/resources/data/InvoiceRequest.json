@@ -1,6 +1,6 @@
 {
   "receptionistEmployeeId": 1,
-  "returnBranchId": 1,
+  "returnRentalOfficeId": 1,
   "bookingId": 1,
   "carReturnDate": "2099-02-22",
   "isVehicleDamaged": true,

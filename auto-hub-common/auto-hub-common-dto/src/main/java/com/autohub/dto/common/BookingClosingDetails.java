@@ -8,15 +8,15 @@ public record BookingClosingDetails(
         @NotNull(message = "Booking id cannot be null")
         Long bookingId,
 
-        @NotNull(message = "Receptionist employee id cannot be null")
-        Long returnBranchId
+        @NotNull(message = "Return rental office id cannot be null")
+        Long returnRentalOfficeId
 ) {
 
     @Override
     public String toString() {
         return "BookingClosingDetails{" + "\n" +
                 "bookingId=" + bookingId + "\n" +
-                "returnBranchId=" + returnBranchId + "\n" +
+                "returnRentalOfficeId=" + returnRentalOfficeId + "\n" +
                 "}";
     }
 

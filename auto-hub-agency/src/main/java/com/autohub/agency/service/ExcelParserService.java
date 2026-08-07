@@ -28,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExcelParserService {
 
-    private final BranchService branchService;
+    private final RentalOfficeService rentalOfficeService;
 
     public List<Car> extractDataFromExcel(MultipartFile file) {
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
@@ -106,8 +106,8 @@ public class ExcelParserService {
                 .mileage(Integer.parseInt((String) values.get(CarFields.MILEAGE.ordinal())))
                 .carStatus(CarStatus.valueOf(((String) values.get(CarFields.CAR_STATUS.ordinal())).toUpperCase()))
                 .amount(new BigDecimal((String) values.get(CarFields.AMOUNT.ordinal())))
-                .originalBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ORIGINAL_BRANCH_ID.ordinal()))))
-                .actualBranch(branchService.findEntityById(Long.valueOf((String) values.get(CarFields.ACTUAL_BRANCH_ID.ordinal()))))
+                .initialRentalOffice(rentalOfficeService.findEntityById(Long.valueOf((String) values.get(CarFields.INITIAL_RENTAL_OFFICE_ID.ordinal()))))
+                .actualRentalOffice(rentalOfficeService.findEntityById(Long.valueOf((String) values.get(CarFields.ACTUAL_RENTAL_OFFICE_ID.ordinal()))))
                 .image(getImageData((PictureData) values.get(CarFields.IMAGE.ordinal())))
                 .build();
     }

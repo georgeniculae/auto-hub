@@ -12,8 +12,8 @@ public record InvoiceRequest(
         @NotNull(message = "Receptionist employee id cannot be null")
         Long receptionistEmployeeId,
 
-        @NotNull(message = "Return branch id cannot be null")
-        Long returnBranchId,
+        @NotNull(message = "Return rental office id cannot be null")
+        Long returnRentalOfficeId,
 
         @NotNull(message = "Booking id cannot be null")
         Long bookingId,
@@ -34,7 +34,8 @@ public record InvoiceRequest(
     @Override
     public String toString() {
         return "InvoiceRequest{" + "\n" +
-                "returnBranchId=" + receptionistEmployeeId + "\n" +
+                "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
+                "returnRentalOfficeId=" + returnRentalOfficeId + "\n" +
                 "bookingId=" + bookingId + "\n" +
                 "carReturnDate=" + carReturnDate + "\n" +
                 "isVehicleDamaged=" + isVehicleDamaged + "\n" +

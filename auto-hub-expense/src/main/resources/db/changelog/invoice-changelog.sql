@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS public.invoice
     customer_email           VARCHAR(255)                            NOT NULL,
     car_id                   BIGINT                                  NOT NULL,
     receptionist_employee_id BIGINT,
-    return_branch_id         BIGINT,
+    return_rental_office_id  BIGINT,
     booking_id               BIGINT                                  NOT NULL,
     date_from                DATE                                    NOT NULL,
     date_to                  DATE                                    NOT NULL,

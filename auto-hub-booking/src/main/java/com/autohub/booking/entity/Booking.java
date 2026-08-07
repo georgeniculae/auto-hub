@@ -8,8 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -38,7 +36,6 @@ public class Booking {
 
     @NotNull(message = "Date of booking cannot be null")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Temporal(TemporalType.DATE)
     private LocalDate dateOfBooking;
 
     @Enumerated(EnumType.STRING)
@@ -57,12 +54,10 @@ public class Booking {
 
     @NotNull(message = "Date from cannot be null")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Temporal(TemporalType.DATE)
     private LocalDate dateFrom;
 
     @NotNull(message = "Date to cannot be blank")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Temporal(TemporalType.DATE)
     private LocalDate dateTo;
 
     private BigDecimal amount;
@@ -70,10 +65,10 @@ public class Booking {
     @NotNull(message = "Rental car price cannot be null")
     private BigDecimal rentalCarPrice;
 
-    @NotNull(message = "Rental branch id cannot be null")
-    private Long rentalBranchId;
+    @NotNull(message = "Pickup rental office id cannot be null")
+    private Long pickupRentalOfficeId;
 
-    private Long returnBranchId;
+    private Long returnRentalOfficeId;
 
     private boolean isUpdated;
 

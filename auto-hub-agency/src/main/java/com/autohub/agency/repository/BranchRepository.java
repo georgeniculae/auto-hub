@@ -23,8 +23,9 @@ public interface BranchRepository extends JpaRepository<Branch, Long> {
     @Query("""
             From Branch branch
             where upper(branch.name) like upper(concat('%', ?1, '%')) or
+            upper(branch.region) like upper(concat('%', ?1, '%')) or
             upper(branch.address) like upper(concat('%', ?1, '%')) or
-            upper(branch.rentalOffice.name) like upper(concat('%', ?1, '%'))""")
+            upper(branch.phoneNumber) like upper(concat('%', ?1, '%'))""")
     @QueryHints(value = {
             @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
             @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),

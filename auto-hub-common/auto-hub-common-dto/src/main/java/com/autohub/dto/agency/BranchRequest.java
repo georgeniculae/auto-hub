@@ -1,7 +1,6 @@
 package com.autohub.dto.agency;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
@@ -9,19 +8,23 @@ public record BranchRequest(
         @NotEmpty(message = "Name cannot be empty")
         String name,
 
+        @NotEmpty(message = "Region cannot be empty")
+        String region,
+
         @NotEmpty(message = "Address cannot be empty")
         String address,
 
-        @NotNull(message = "Rental office id cannot be empty")
-        Long rentalOfficeId
+        @NotEmpty(message = "Phone number cannot be empty")
+        String phoneNumber
 ) {
 
     @Override
     public String toString() {
         return "BranchRequest{" + "\n" +
-                ", name='" + name + "\n" +
-                ", address='" + address + "\n" +
-                ", rentalOfficeId=" + rentalOfficeId + "\n" +
+                "name=" + name + "\n" +
+                "region=" + region + "\n" +
+                "address=" + address + "\n" +
+                "phoneNumber=" + phoneNumber + "\n" +
                 "}";
     }
 

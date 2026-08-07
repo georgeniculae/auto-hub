@@ -37,10 +37,10 @@ public record BookingResponse(
 
         BigDecimal rentalCarPrice,
 
-        @NotNull(message = "Rental branch id cannot be null")
-        Long rentalBranchId,
+        @NotNull(message = "Pickup rental office id cannot be null")
+        Long pickupRentalOfficeId,
 
-        Long returnBranchId
+        Long returnRentalOfficeId
 ) {
 
     @Override
@@ -54,8 +54,8 @@ public record BookingResponse(
                 "dateFrom=" + dateFrom + "\n" +
                 "dateTo=" + dateTo + "\n" +
                 "rentalCarPrice=" + rentalCarPrice + "\n" +
-                "rentalBranchId=" + rentalBranchId + "\n" +
-                "returnBranchId=" + returnBranchId + "\n" +
+                "pickupRentalOfficeId=" + pickupRentalOfficeId + "\n" +
+                "returnRentalOfficeId=" + returnRentalOfficeId + "\n" +
                 "}";
     }
 

@@ -17,7 +17,7 @@ public record InvoiceReprocessRequest(
         Long receptionistEmployeeId,
 
         @NotNull
-        Long returnBranchId,
+        Long returnRentalOfficeId,
 
         @NotNull
         Long bookingId,
@@ -42,7 +42,7 @@ public record InvoiceReprocessRequest(
                 "invoiceId='" + invoiceId + '\'' +
                 ", previousCarId='" + carId + '\'' +
                 ", receptionistEmployeeId='" + receptionistEmployeeId + '\'' +
-                ", returnBranchId='" + returnBranchId + '\'' +
+                ", returnRentalOfficeId='" + returnRentalOfficeId + '\'' +
                 ", bookingId='" + bookingId + '\'' +
                 ", carReturnDate=" + carReturnDate +
                 ", isVehicleDamaged=" + isVehicleDamaged +

@@ -1,6 +1,13 @@
 {
   "id": 1,
   "name": "Test Rental Office",
-  "contactAddress": "Ploiesti",
-  "phoneNumber": ""
+  "city": "Ploiesti",
+  "address": "Ploiesti",
+  "branch": {
+    "id": 1,
+    "name": "Test Branch",
+    "region": "Ploiesti",
+    "address": "Ploiesti",
+    "phoneNumber": "0722222222"
+  }
 }

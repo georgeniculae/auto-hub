@@ -1,7 +1,7 @@
 package com.autohub.agency.service;
 
-import com.autohub.agency.entity.Branch;
 import com.autohub.agency.entity.Employee;
+import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.mapper.EmployeeMapper;
 import com.autohub.agency.repository.EmployeeRepository;
 import com.autohub.dto.agency.EmployeeRequest;
@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
-    private final BranchService branchService;
+    private final RentalOfficeService rentalOfficeService;
     private final EmployeeMapper employeeMapper;
 
     @Transactional(readOnly = true)
@@ -45,10 +45,9 @@ public class EmployeeService {
     }
 
     public EmployeeResponse saveEmployee(EmployeeRequest employeeRequest) {
-        Long workingBranchId = employeeRequest.workingBranchId();
-        Branch workingBranch = branchService.findEntityById(workingBranchId);
+        RentalOffice workingRentalOffice = rentalOfficeService.findEntityById(employeeRequest.workingRentalOfficeId());
 
-        Employee newEmployee = employeeMapper.getNewEmployee(employeeRequest, workingBranch);
+        Employee newEmployee = employeeMapper.getNewEmployee(employeeRequest, workingRentalOffice);
         Employee savedEmployee = saveEntity(newEmployee);
 
         return employeeMapper.mapEntityToDto(savedEmployee);
@@ -56,14 +55,12 @@ public class EmployeeService {
 
     public EmployeeResponse updateEmployee(Long id, EmployeeRequest updatedEmployeeRequest) {
         Employee existingEmployee = findEntityById(id);
-
-        Long workingBranchId = updatedEmployeeRequest.workingBranchId();
-        Branch workingBranch = branchService.findEntityById(workingBranchId);
+        RentalOffice workingRentalOffice = rentalOfficeService.findEntityById(updatedEmployeeRequest.workingRentalOfficeId());
 
         existingEmployee.setFirstName(updatedEmployeeRequest.firstName());
         existingEmployee.setLastName(updatedEmployeeRequest.lastName());
         existingEmployee.setJobPosition(updatedEmployeeRequest.jobPosition());
-        existingEmployee.setWorkingBranch(workingBranch);
+        existingEmployee.setWorkingRentalOffice(workingRentalOffice);
 
         Employee savedEmployee = saveEntity(existingEmployee);
 
@@ -71,8 +68,8 @@ public class EmployeeService {
     }
 
     @Transactional(readOnly = true)
-    public List<EmployeeResponse> findEmployeesByBranchId(Long id) {
-        try (Stream<Employee> employeeStream = employeeRepository.findAllEmployeesByBranchId(id)) {
+    public List<EmployeeResponse> findEmployeesByRentalOfficeId(Long id) {
+        try (Stream<Employee> employeeStream = employeeRepository.findAllEmployeesByRentalOfficeId(id)) {
             return employeeStream.map(employeeMapper::mapEntityToDto).toList();
         }
     }

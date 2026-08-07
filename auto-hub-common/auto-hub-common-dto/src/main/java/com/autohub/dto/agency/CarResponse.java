@@ -34,11 +34,14 @@ public record CarResponse(
         @NotNull(message = "Amount cannot be null")
         BigDecimal amount,
 
-        @NotNull(message = "Original branch cannot be null")
-        Long originalBranchId,
+        @NotNull(message = "Initial rental office id cannot be null")
+        Long initialRentalOfficeId,
 
-        @NotNull(message = "Actual branch cannot be null")
-        Long actualBranchId
+        @NotNull(message = "Actual rental office id cannot be null")
+        Long actualRentalOfficeId,
+
+        @NotEmpty(message = "Car location cannot be empty")
+        String carLocation
 ) {
 
     @Override
@@ -53,8 +56,9 @@ public record CarResponse(
                 "mileage=" + mileage + "\n" +
                 "actualCarId=" + carState + "\n" +
                 "amount=" + amount + "\n" +
-                "originalBranchId=" + originalBranchId + "\n" +
-                "actualBranchId=" + actualBranchId + "\n" +
+                "initialRentalOfficeId=" + initialRentalOfficeId + "\n" +
+                "actualRentalOfficeId=" + actualRentalOfficeId + "\n" +
+                "carLocation=" + carLocation + "\n" +
                 "}";
     }
 

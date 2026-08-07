@@ -1,7 +1,6 @@
 package com.autohub.agency.mapper;
 
 import com.autohub.agency.entity.Branch;
-import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.util.AssertionUtil;
 import com.autohub.agency.util.TestUtil;
 import com.autohub.dto.agency.BranchRequest;
@@ -38,10 +37,7 @@ class BranchMapperTest {
         BranchRequest branchRequest =
                 TestUtil.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
 
-        RentalOffice rentalOffice =
-                TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
-
-        Branch branch = branchMapper.getNewBranch(branchRequest, rentalOffice);
+        Branch branch = branchMapper.getNewBranch(branchRequest);
 
         assertNotNull(branch);
         AssertionUtil.assertBranchRequest(branch, branchRequest);
@@ -49,7 +45,7 @@ class BranchMapperTest {
 
     @Test
     void getNewBranchTest_null() {
-        assertNull(branchMapper.getNewBranch(null, null));
+        assertNull(branchMapper.getNewBranch(null));
     }
 
 }

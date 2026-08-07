@@ -1,15 +1,21 @@
 package com.autohub.agency.service;
 
-import com.autohub.agency.entity.Branch;
 import com.autohub.agency.entity.Car;
+import com.autohub.agency.entity.Employee;
+import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.mapper.CarMapper;
 import com.autohub.agency.mapper.CarMapperImpl;
+import com.autohub.agency.producer.CarAvailableProducerService;
 import com.autohub.agency.repository.CarRepository;
 import com.autohub.agency.util.AssertionUtil;
 import com.autohub.agency.util.TestUtil;
 import com.autohub.dto.agency.CarRequest;
 import com.autohub.dto.agency.CarResponse;
+import com.autohub.dto.ai.AvailableCarDetails;
 import com.autohub.dto.common.AvailableCarInfo;
+import com.autohub.dto.common.CarState;
+import com.autohub.dto.common.CarStatusUpdate;
+import com.autohub.dto.common.CarUpdateDetails;
 import com.autohub.dto.common.UpdateCarsRequest;
 import com.autohub.exception.AutoHubException;
 import com.autohub.exception.AutoHubNotFoundException;
@@ -40,6 +46,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,10 +60,16 @@ class CarServiceTest {
     private CarRepository carRepository;
 
     @Mock
-    private BranchService branchService;
+    private RentalOfficeService rentalOfficeService;
 
     @Mock
     private ExcelParserService excelParserService;
+
+    @Mock
+    private EmployeeService employeeService;
+
+    @Mock
+    private CarAvailableProducerService carAvailableProducerService;
 
     @Spy
     private ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
@@ -120,14 +133,14 @@ class CarServiceTest {
 
     @Test
     void saveCarTest_success() {
-        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
+        RentalOffice rentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
         Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
         CarRequest carRequest = TestUtil.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
         MockMultipartFile image =
                 new MockMultipartFile("car", "car.jpg", MediaType.TEXT_PLAIN_VALUE, "car".getBytes());
 
-        when(branchService.findEntityById(anyLong())).thenReturn(branch);
+        when(rentalOfficeService.findEntityById(anyLong())).thenReturn(rentalOffice);
         when(carRepository.save(any(Car.class))).thenReturn(car);
 
         CarResponse savedCarResponse = carService.saveCar(carRequest, image);
@@ -136,7 +149,7 @@ class CarServiceTest {
 
     @Test
     void updateCarTest_success() {
-        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
+        RentalOffice rentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
         Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
         CarRequest carRequest = TestUtil.getResourceAsJson("/data/CarRequest.json", CarRequest.class);
 
@@ -144,7 +157,7 @@ class CarServiceTest {
                 new MockMultipartFile("car", "car.jpg", MediaType.TEXT_PLAIN_VALUE, "car".getBytes());
 
         when(carRepository.findById(anyLong())).thenReturn(Optional.of(car));
-        when(branchService.findEntityById(anyLong())).thenReturn(branch);
+        when(rentalOfficeService.findEntityById(anyLong())).thenReturn(rentalOffice);
         when(carRepository.save(any(Car.class))).thenReturn(car);
 
         CarResponse updatedCarResponse = carService.updateCar(1L, carRequest, image);
@@ -208,6 +221,57 @@ class CarServiceTest {
 
         AvailableCarInfo availableCarInfo = carService.findAvailableCar(1L);
         AssertionUtil.assertAvailableCarInfo(Objects.requireNonNull(car), availableCarInfo);
+    }
+
+    @Test
+    void updateCarStatusTest_publishesWhenCarBecomesAvailable() {
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
+        CarStatusUpdate carStatusUpdate = CarStatusUpdate.builder()
+                .carId(1L)
+                .carState(CarState.AVAILABLE)
+                .build();
+
+        when(carRepository.findById(anyLong())).thenReturn(Optional.of(car));
+        when(carRepository.save(any(Car.class))).thenReturn(car);
+
+        carService.updateCarStatus(carStatusUpdate);
+
+        verify(carAvailableProducerService).sendCarAvailable(any(AvailableCarDetails.class));
+    }
+
+    @Test
+    void updateCarStatusTest_doesNotPublishWhenCarBecomesUnavailable() {
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
+        CarStatusUpdate carStatusUpdate = CarStatusUpdate.builder()
+                .carId(1L)
+                .carState(CarState.NOT_AVAILABLE)
+                .build();
+
+        when(carRepository.findById(anyLong())).thenReturn(Optional.of(car));
+        when(carRepository.save(any(Car.class))).thenReturn(car);
+
+        carService.updateCarStatus(carStatusUpdate);
+
+        verify(carAvailableProducerService, never()).sendCarAvailable(any(AvailableCarDetails.class));
+    }
+
+    @Test
+    void updateCarWhenBookingIsClosedTest_publishesReturnedCar() {
+        Car car = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
+        Employee employee = TestUtil.getResourceAsJson("/data/Employee.json", Employee.class);
+        CarUpdateDetails carUpdateDetails = CarUpdateDetails.builder()
+                .carId(1L)
+                .carState(CarState.AVAILABLE)
+                .receptionistEmployeeId(1L)
+                .build();
+
+        when(carRepository.findById(anyLong())).thenReturn(Optional.of(car));
+        when(employeeService.findEntityById(anyLong())).thenReturn(employee);
+        when(carRepository.save(any(Car.class))).thenReturn(car);
+
+        carService.updateCarWhenBookingIsClosed(carUpdateDetails);
+
+        verify(carAvailableProducerService).sendCarAvailable(any(AvailableCarDetails.class));
     }
 
 }

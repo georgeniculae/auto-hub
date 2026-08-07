@@ -2,7 +2,7 @@ package com.autohub.dto.common;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 @Builder
 public record CarUpdateDetails(
@@ -21,7 +21,7 @@ public record CarUpdateDetails(
         return "CarUpdateDetails{" + "\n" +
                 "previousCarId=" + carId + "\n" +
                 "actualCarId=" + carState + "\n" +
-                "returnBranchId=" + receptionistEmployeeId + "\n" +
+                "receptionistEmployeeId=" + receptionistEmployeeId + "\n" +
                 "}";
     }
 

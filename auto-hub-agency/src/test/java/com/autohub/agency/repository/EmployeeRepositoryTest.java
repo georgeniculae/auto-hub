@@ -56,8 +56,8 @@ class EmployeeRepositoryTest {
 
     @Test
     @Transactional(readOnly = true)
-    void findAllEmployeesByBranchIdTest_success() {
-        try (Stream<Employee> employeeStream = employeeRepository.findAllEmployeesByBranchId(1L)) {
+    void findAllEmployeesByRentalOfficeIdTest_success() {
+        try (Stream<Employee> employeeStream = employeeRepository.findAllEmployeesByRentalOfficeId(1L)) {
             List<Employee> employees = employeeStream.toList();
             assertEquals(2, employees.size());
         }

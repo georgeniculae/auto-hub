@@ -1,12 +1,11 @@
 {
+  "id": 1,
   "make": "Volkswagen",
   "model": "Golf",
   "bodyCategory": "HATCHBACK",
   "yearOfProduction": 2010,
   "color": "black",
   "mileage": 270000,
-  "carState": "AVAILABLE",
   "amount": 500,
-  "initialRentalOfficeId": 1,
-  "actualRentalOfficeId": 1
+  "carLocation": "Ploiesti"
 }

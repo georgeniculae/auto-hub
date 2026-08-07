@@ -23,7 +23,7 @@ public record InvoiceResponse(
 
         Long receptionistEmployeeId,
 
-        Long returnBranchId,
+        Long returnRentalOfficeId,
 
         @NotNull(message = "Booking id cannot be null")
         Long bookingId,
@@ -57,7 +57,7 @@ public record InvoiceResponse(
                 ", customerEmail='" + customerEmail + '\'' +
                 ", previousCarId='" + carId + '\'' +
                 ", receptionistEmployeeId='" + receptionistEmployeeId + '\'' +
-                ", returnBranchId='" + returnBranchId + '\'' +
+                ", returnRentalOfficeId='" + returnRentalOfficeId + '\'' +
                 ", bookingId='" + bookingId + '\'' +
                 ", carReturnDate=" + carReturnDate +
                 ", dateTo=" + dateTo +

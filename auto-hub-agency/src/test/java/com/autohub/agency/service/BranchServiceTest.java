@@ -1,7 +1,6 @@
 package com.autohub.agency.service;
 
 import com.autohub.agency.entity.Branch;
-import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.mapper.BranchMapper;
 import com.autohub.agency.mapper.BranchMapperImpl;
 import com.autohub.agency.repository.BranchRepository;
@@ -38,9 +37,6 @@ class BranchServiceTest {
     @Mock
     private BranchRepository branchRepository;
 
-    @Mock
-    private RentalOfficeService rentalOfficeService;
-
     @Spy
     private BranchMapper branchMapper = new BranchMapperImpl();
 
@@ -50,9 +46,9 @@ class BranchServiceTest {
 
         when(branchRepository.findById(anyLong())).thenReturn(Optional.of(branch));
 
-        BranchResponse actualBranchResponse = branchService.findBranchById(1L);
+        BranchResponse branchResponse = branchService.findBranchById(1L);
 
-        assertNotNull(actualBranchResponse);
+        assertNotNull(branchResponse);
         verify(branchMapper).mapEntityToDto(any(Branch.class));
     }
 
@@ -70,9 +66,7 @@ class BranchServiceTest {
     void updateBranchTest_success() {
         Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
         BranchRequest branchRequest = TestUtil.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
-        RentalOffice rentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
-        when(rentalOfficeService.findEntityById(anyLong())).thenReturn(rentalOffice);
         when(branchRepository.findById(anyLong())).thenReturn(Optional.of(branch));
         when(branchRepository.save(branch)).thenReturn(branch);
 
@@ -84,9 +78,7 @@ class BranchServiceTest {
     void saveBranchTest_success() {
         Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
         BranchRequest branchRequest = TestUtil.getResourceAsJson("/data/BranchRequest.json", BranchRequest.class);
-        RentalOffice rentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
-        when(rentalOfficeService.findEntityById(anyLong())).thenReturn(rentalOffice);
         when(branchRepository.save(any(Branch.class))).thenReturn(branch);
 
         BranchResponse savedBranchResponse = branchService.saveBranch(branchRequest);

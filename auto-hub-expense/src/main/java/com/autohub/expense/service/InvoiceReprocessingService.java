@@ -21,16 +21,16 @@ public class InvoiceReprocessingService implements RetryListener {
 
     public void reprocessInvoice(InvoiceReprocessRequest invoiceReprocessRequest) {
         BookingClosingDetails bookingClosingDetails =
-                getBookingClosingDetails(invoiceReprocessRequest.bookingId(), invoiceReprocessRequest.returnBranchId());
+                getBookingClosingDetails(invoiceReprocessRequest.bookingId(), invoiceReprocessRequest.returnRentalOfficeId());
 
         carStatusUpdateProducerService.markCarAsAvailable(getCarUpdateDetails(invoiceReprocessRequest));
         bookingUpdateProducerService.closeBooking(bookingClosingDetails);
     }
 
-    private BookingClosingDetails getBookingClosingDetails(Long bookingId, Long returnBranchId) {
+    private BookingClosingDetails getBookingClosingDetails(Long bookingId, Long returnRentalOfficeId) {
         return BookingClosingDetails.builder()
                 .bookingId(bookingId)
-                .returnBranchId(returnBranchId)
+                .returnRentalOfficeId(returnRentalOfficeId)
                 .build();
     }
 

@@ -31,7 +31,7 @@ public class Employee extends BaseEntity {
     private String jobPosition;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "working_branch_id")
-    private Branch workingBranch;
+    @JoinColumn(name = "working_rental_office_id")
+    private RentalOffice workingRentalOffice;
 
 }

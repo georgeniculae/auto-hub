@@ -15,8 +15,8 @@ public record EmployeeRequest(
         @NotEmpty(message = "Job position cannot be empty")
         String jobPosition,
 
-        @NotNull(message = "Working branch id cannot be empty")
-        Long workingBranchId
+        @NotNull(message = "Working rental office id cannot be null")
+        Long workingRentalOfficeId
 ) {
 
     @Override
@@ -25,7 +25,7 @@ public record EmployeeRequest(
                 "firstName='" + firstName + "\n" +
                 "lastName='" + lastName + "\n" +
                 "jobPosition='" + jobPosition + "\n" +
-                "workingBranchId=" + workingBranchId + "\n" +
+                "workingRentalOfficeId=" + workingRentalOfficeId + "\n" +
                 "}";
     }
 

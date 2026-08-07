@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 @Builder
 public record AvailableCarInfo(
         Long id,
-        Long actualBranchId,
+        Long actualRentalOfficeId,
         BigDecimal amount
 ) {
 }

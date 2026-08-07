@@ -1,7 +1,7 @@
 package com.autohub.agency.mapper;
 
-import com.autohub.agency.entity.Branch;
 import com.autohub.agency.entity.Employee;
+import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.util.AssertionUtil;
 import com.autohub.agency.util.TestUtil;
 import com.autohub.dto.agency.EmployeeRequest;
@@ -38,9 +38,9 @@ class EmployeeMapperTest {
         EmployeeRequest employeeRequest =
                 TestUtil.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
 
-        Branch workingBranch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
+        RentalOffice workingRentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
-        Employee employee = employeeMapper.getNewEmployee(employeeRequest, workingBranch);
+        Employee employee = employeeMapper.getNewEmployee(employeeRequest, workingRentalOffice);
 
         assertNotNull(employeeRequest);
         AssertionUtil.assertEmployeeRequest(employee, employeeRequest);

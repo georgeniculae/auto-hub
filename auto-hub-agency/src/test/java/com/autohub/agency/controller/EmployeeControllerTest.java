@@ -101,13 +101,13 @@ class EmployeeControllerTest {
 
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
-    void findEmployeesByBranchIdTest_success() throws Exception {
+    void findEmployeesByRentalOfficeIdTest_success() throws Exception {
         EmployeeResponse employeeResponse =
                 TestUtil.getResourceAsJson("/data/EmployeeResponse.json", EmployeeResponse.class);
 
-        when(employeeService.findEmployeesByBranchId(anyLong())).thenReturn(List.of(employeeResponse));
+        when(employeeService.findEmployeesByRentalOfficeId(anyLong())).thenReturn(List.of(employeeResponse));
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/branch/{id}", 1L)
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/rental-office/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -119,8 +119,8 @@ class EmployeeControllerTest {
 
     @Test
     @WithAnonymousUser
-    void findEmployeesByBranchIdTest_unauthorized() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/branch/{id}", 1L)
+    void findEmployeesByRentalOfficeIdTest_unauthorized() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/rental-office/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());

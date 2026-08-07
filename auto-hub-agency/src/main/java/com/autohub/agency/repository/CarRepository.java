@@ -24,10 +24,12 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             car.mileage,
             car.carStatus,
             car.amount,
-            car.originalBranch,
-            car.actualBranch
+            initialOffice,
+            actualOffice
             )
             From Car car
+            left join car.initialRentalOffice initialOffice
+            left join car.actualRentalOffice actualOffice
             where car.id = ?1""")
     @NonNull
     Optional<Car> findById(@NonNull Long id);
@@ -43,10 +45,12 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             car.mileage,
             car.carStatus,
             car.amount,
-            car.originalBranch,
-            car.actualBranch
+            initialOffice,
+            actualOffice
             )
             From Car car
+            left join car.initialRentalOffice initialOffice
+            left join car.actualRentalOffice actualOffice
             where upper(car.make) like upper(concat('%', ?1, '%'))
             or upper(car.model) like upper(concat('%', ?1, '%'))""")
     @QueryHints(value = {
@@ -67,10 +71,12 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             car.mileage,
             car.carStatus,
             car.amount,
-            car.originalBranch,
-            car.actualBranch
+            initialOffice,
+            actualOffice
             )
-            From Car car""")
+            From Car car
+            left join car.initialRentalOffice initialOffice
+            left join car.actualRentalOffice actualOffice""")
     @QueryHints(value = {
             @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
             @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
@@ -90,10 +96,12 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             car.mileage,
             car.carStatus,
             car.amount,
-            car.originalBranch,
-            car.actualBranch
+            initialOffice,
+            actualOffice
             )
             From Car car
+            left join car.initialRentalOffice initialOffice
+            left join car.actualRentalOffice actualOffice
             where car.carStatus = 'AVAILABLE'""")
     @QueryHints(value = {
             @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
@@ -114,10 +122,12 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             car.mileage,
             car.carStatus,
             car.amount,
-            car.originalBranch,
-            car.actualBranch
+            initialOffice,
+            actualOffice
             )
             From Car car
+            left join car.initialRentalOffice initialOffice
+            left join car.actualRentalOffice actualOffice
             where upper(car.make) like upper(concat('%', ?1, '%'))""")
     @QueryHints(value = {
             @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),

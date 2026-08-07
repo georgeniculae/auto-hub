@@ -4,7 +4,7 @@
   "customerEmail": "test@mail.com",
   "carId": 1,
   "receptionistEmployeeId": 1,
-  "returnBranchId": 1,
+  "returnRentalOfficeId": 1,
   "bookingId": 1,
   "dateFrom": "2099-02-21",
   "dateTo": "2099-02-22",

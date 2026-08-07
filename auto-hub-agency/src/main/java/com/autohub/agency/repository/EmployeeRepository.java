@@ -25,7 +25,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             where upper(employee.firstName) like upper(concat('%', ?1, '%'))
             or upper(employee.lastName) like upper(concat('%', ?1, '%'))
             or upper(employee.jobPosition) like upper(concat('%', ?1, '%'))
-            or upper(employee.workingBranch.name) like upper(concat('%', ?1, '%'))""")
+            or upper(employee.workingRentalOffice.name) like upper(concat('%', ?1, '%'))""")
     @QueryHints(value = {
             @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
             @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
@@ -35,7 +35,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query("""
             From Employee employee
-            where employee.workingBranch.id = ?1""")
-    Stream<Employee> findAllEmployeesByBranchId(Long id);
+            where employee.workingRentalOffice.id = ?1""")
+    Stream<Employee> findAllEmployeesByRentalOfficeId(Long id);
 
 }

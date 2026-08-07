@@ -1,5 +1,6 @@
 package com.autohub.agency.service;
 
+import com.autohub.agency.entity.Branch;
 import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.mapper.RentalOfficeMapper;
 import com.autohub.agency.repository.RentalOfficeRepository;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
 public class RentalOfficeService {
 
     private final RentalOfficeRepository rentalOfficeRepository;
+    private final BranchService branchService;
     private final RentalOfficeMapper rentalOfficeMapper;
 
     @Transactional(readOnly = true)
@@ -43,7 +45,8 @@ public class RentalOfficeService {
     }
 
     public RentalOfficeResponse saveRentalOffice(RentalOfficeRequest rentalOfficeRequest) {
-        RentalOffice rentalOffice = rentalOfficeMapper.getNewRentalOffice(rentalOfficeRequest);
+        Branch branch = branchService.findEntityById(rentalOfficeRequest.branchId());
+        RentalOffice rentalOffice = rentalOfficeMapper.getNewRentalOffice(rentalOfficeRequest, branch);
         RentalOffice savedRentalOffice = saveEntity(rentalOffice);
 
         return rentalOfficeMapper.mapEntityToDto(savedRentalOffice);
@@ -51,10 +54,12 @@ public class RentalOfficeService {
 
     public RentalOfficeResponse updateRentalOffice(Long id, RentalOfficeRequest updatedRentalOfficeRequest) {
         RentalOffice existingRentalOffice = findEntityById(id);
+        Branch branch = branchService.findEntityById(updatedRentalOfficeRequest.branchId());
 
         existingRentalOffice.setName(updatedRentalOfficeRequest.name());
-        existingRentalOffice.setContactAddress(updatedRentalOfficeRequest.contactAddress());
-        existingRentalOffice.setPhoneNumber(updatedRentalOfficeRequest.phoneNumber());
+        existingRentalOffice.setCity(updatedRentalOfficeRequest.city());
+        existingRentalOffice.setAddress(updatedRentalOfficeRequest.address());
+        existingRentalOffice.setBranch(branch);
 
         RentalOffice savedRentalOffice = saveEntity(existingRentalOffice);
 

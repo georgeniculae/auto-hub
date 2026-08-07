@@ -35,6 +35,9 @@ spring:
     stream:
       defaultBinder: kafka
       bindings:
+        carAvailableProducer-out-0:
+          destination: ${CAR_AVAILABLE_AI_TOPIC}
+          contentType: application/json
         updatedCarBookingSavedConsumer-in-0:
           binder: kafka
           destination: ${SAVE_BOOKING_CAR_UPDATE_TOPIC}

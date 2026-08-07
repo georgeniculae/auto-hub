@@ -1,10 +1,11 @@
 package com.autohub.agency.service;
 
 import com.autohub.agency.entity.BodyType;
-import com.autohub.agency.entity.Branch;
 import com.autohub.agency.entity.Car;
 import com.autohub.agency.entity.CarStatus;
+import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.mapper.CarMapper;
+import com.autohub.agency.producer.CarAvailableProducerService;
 import com.autohub.agency.repository.CarRepository;
 import com.autohub.dto.agency.CarRequest;
 import com.autohub.dto.agency.CarResponse;
@@ -31,11 +32,12 @@ import java.util.stream.Stream;
 public class CarService {
 
     private final CarRepository carRepository;
-    private final BranchService branchService;
+    private final RentalOfficeService rentalOfficeService;
     private final EmployeeService employeeService;
     private final ExcelParserService excelParserService;
     private final CarMapper carMapper;
     private final ExecutorService executorService;
+    private final CarAvailableProducerService carAvailableProducerService;
 
     @Transactional(readOnly = true)
     public List<CarResponse> findAllCars() {
@@ -78,25 +80,26 @@ public class CarService {
     }
 
     public CarResponse saveCar(CarRequest carRequest, MultipartFile image) {
-        Branch originalBranch = branchService.findEntityById(carRequest.originalBranchId());
-        Branch actualBranch = branchService.findEntityById(carRequest.actualBranchId());
+        RentalOffice initialRentalOffice = rentalOfficeService.findEntityById(carRequest.initialRentalOfficeId());
+        RentalOffice actualRentalOffice = rentalOfficeService.findEntityById(carRequest.actualRentalOfficeId());
 
-        Car car = carMapper.getNewCar(carRequest, image, originalBranch, actualBranch);
+        Car car = carMapper.getNewCar(carRequest, image, initialRentalOffice, actualRentalOffice);
         Car savedCar = saveEntity(car);
+        publishIfAvailable(savedCar);
 
         return carMapper.mapEntityToDto(savedCar);
     }
 
     public CarResponse updateCar(Long id, CarRequest updatedCarRequest, MultipartFile image) {
         CompletableFuture<Car> existingCarFuture = getCompletableFuture(() -> findEntityById(id));
-        CompletableFuture<Branch> originalBranch = getCompletableFuture(() -> branchService.findEntityById(updatedCarRequest.originalBranchId()));
-        CompletableFuture<Branch> actualBranch = getCompletableFuture(() -> branchService.findEntityById(updatedCarRequest.actualBranchId()));
-        CompletableFuture.allOf(existingCarFuture, originalBranch, actualBranch).join();
+        CompletableFuture<RentalOffice> initialRentalOffice = getCompletableFuture(() -> rentalOfficeService.findEntityById(updatedCarRequest.initialRentalOfficeId()));
+        CompletableFuture<RentalOffice> actualRentalOffice = getCompletableFuture(() -> rentalOfficeService.findEntityById(updatedCarRequest.actualRentalOfficeId()));
+        CompletableFuture.allOf(existingCarFuture, initialRentalOffice, actualRentalOffice).join();
 
         Car existingCar = getCompletableFutureResult(existingCarFuture);
 
-        existingCar.setOriginalBranch(getCompletableFutureResult(originalBranch));
-        existingCar.setActualBranch(getCompletableFutureResult(actualBranch));
+        existingCar.setInitialRentalOffice(getCompletableFutureResult(initialRentalOffice));
+        existingCar.setActualRentalOffice(getCompletableFutureResult(actualRentalOffice));
         existingCar.setMake(updatedCarRequest.make());
         existingCar.setModel(updatedCarRequest.model());
         existingCar.setBodyType(BodyType.valueOf(updatedCarRequest.bodyCategory().name()));
@@ -108,6 +111,7 @@ public class CarService {
         existingCar.setImage(carMapper.mapToImage(image));
 
         Car savedCar = saveEntity(existingCar);
+        publishIfAvailable(savedCar);
 
         return carMapper.mapEntityToDto(savedCar);
     }
@@ -116,14 +120,16 @@ public class CarService {
         Car car = findEntityById(carStatusUpdate.carId());
         car.setCarStatus(CarStatus.valueOf(carStatusUpdate.carState().name()));
 
-        saveEntity(car);
+        publishIfAvailable(saveEntity(car));
     }
 
     public List<CarResponse> updateCarsStatus(UpdateCarsRequest updateCarsRequest) {
         List<Car> updatableCars = getUpdatableCars(updateCarsRequest);
+        List<Car> savedCars = carRepository.saveAll(updatableCars);
 
-        return carRepository.saveAll(updatableCars)
-                .stream()
+        savedCars.forEach(this::publishIfAvailable);
+
+        return savedCars.stream()
                 .map(carMapper::mapEntityToDto)
                 .toList();
     }
@@ -131,6 +137,7 @@ public class CarService {
     public List<CarResponse> uploadCars(MultipartFile file) {
         List<Car> cars = excelParserService.extractDataFromExcel(file);
         List<Car> savedCars = carRepository.saveAll(cars);
+        savedCars.forEach(this::publishIfAvailable);
 
         return getCarResponses(savedCars.stream());
     }
@@ -138,9 +145,9 @@ public class CarService {
     public void updateCarWhenBookingIsClosed(CarUpdateDetails carUpdateDetails) {
         Car car = findEntityById(carUpdateDetails.carId());
         car.setCarStatus(CarStatus.valueOf(carUpdateDetails.carState().name()));
-        car.setActualBranch(getActualBranch(carUpdateDetails));
+        car.setActualRentalOffice(getActualRentalOffice(carUpdateDetails));
 
-        saveEntity(car);
+        publishIfAvailable(saveEntity(car));
     }
 
     public void deleteCarById(Long id) {
@@ -160,6 +167,12 @@ public class CarService {
 
     private Car saveEntity(Car car) {
         return carRepository.save(car);
+    }
+
+    private void publishIfAvailable(Car car) {
+        if (CarStatus.AVAILABLE.equals(car.getCarStatus())) {
+            carAvailableProducerService.sendCarAvailable(carMapper.mapEntityToAvailableCarDetails(car));
+        }
     }
 
     private Car findEntityById(Long id) {
@@ -203,8 +216,8 @@ public class CarService {
         return CarStatus.NOT_AVAILABLE;
     }
 
-    private Branch getActualBranch(CarUpdateDetails carUpdateDetails) {
-        return employeeService.findEntityById(carUpdateDetails.receptionistEmployeeId()).getWorkingBranch();
+    private RentalOffice getActualRentalOffice(CarUpdateDetails carUpdateDetails) {
+        return employeeService.findEntityById(carUpdateDetails.receptionistEmployeeId()).getWorkingRentalOffice();
     }
 
     private List<CarResponse> getCarResponses(Stream<Car> cars) {

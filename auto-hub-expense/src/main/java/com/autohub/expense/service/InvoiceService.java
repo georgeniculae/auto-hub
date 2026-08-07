@@ -168,7 +168,7 @@ public class InvoiceService implements RetryListener {
         existingInvoice.setAdditionalPayment(getAdditionalPayment(invoiceRequest));
         existingInvoice.setComments(invoiceRequest.comments());
         existingInvoice.setTotalAmount(getTotalAmount(existingInvoice, invoiceRequest));
-        existingInvoice.setReturnBranchId(invoiceRequest.returnBranchId());
+        existingInvoice.setReturnRentalOfficeId(invoiceRequest.returnRentalOfficeId());
 
         return invoiceRepository.save(existingInvoice);
     }

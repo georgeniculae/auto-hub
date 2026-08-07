@@ -1,7 +1,6 @@
 package com.autohub.agency.service;
 
 import com.autohub.agency.entity.Branch;
-import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.mapper.BranchMapper;
 import com.autohub.agency.repository.BranchRepository;
 import com.autohub.dto.agency.BranchRequest;
@@ -19,7 +18,6 @@ import java.util.stream.Stream;
 public class BranchService {
 
     private final BranchRepository branchRepository;
-    private final RentalOfficeService rentalOfficeService;
     private final BranchMapper branchMapper;
 
     @Transactional(readOnly = true)
@@ -41,24 +39,21 @@ public class BranchService {
     }
 
     public BranchResponse saveBranch(BranchRequest branchRequest) {
-        RentalOffice rentalOffice = rentalOfficeService.findEntityById(branchRequest.rentalOfficeId());
-        Branch newBranch = branchMapper.getNewBranch(branchRequest, rentalOffice);
+        Branch newBranch = branchMapper.getNewBranch(branchRequest);
         Branch savedBranch = saveEntity(newBranch);
 
         return branchMapper.mapEntityToDto(savedBranch);
     }
 
     public BranchResponse updateBranch(Long id, BranchRequest updatedBranchRequest) {
-        Branch exitingBranch = findEntityById(id);
+        Branch existingBranch = findEntityById(id);
 
-        Long rentalOfficeId = updatedBranchRequest.rentalOfficeId();
-        RentalOffice rentalOffice = rentalOfficeService.findEntityById(rentalOfficeId);
+        existingBranch.setName(updatedBranchRequest.name());
+        existingBranch.setRegion(updatedBranchRequest.region());
+        existingBranch.setAddress(updatedBranchRequest.address());
+        existingBranch.setPhoneNumber(updatedBranchRequest.phoneNumber());
 
-        exitingBranch.setName(updatedBranchRequest.name());
-        exitingBranch.setAddress(updatedBranchRequest.address());
-        exitingBranch.setRentalOffice(rentalOffice);
-
-        Branch savedBranch = saveEntity(exitingBranch);
+        Branch savedBranch = saveEntity(existingBranch);
 
         return branchMapper.mapEntityToDto(savedBranch);
     }

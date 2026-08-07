@@ -41,10 +41,10 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeResponse);
     }
 
-    @GetMapping(path = "/branch/{id}")
+    @GetMapping(path = "/rental-office/{id}")
     @PreAuthorize("hasRole('user')")
-    public ResponseEntity<List<EmployeeResponse>> findEmployeesByBranchId(@PathVariable Long id) {
-        List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByBranchId(id);
+    public ResponseEntity<List<EmployeeResponse>> findEmployeesByRentalOfficeId(@PathVariable Long id) {
+        List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByRentalOfficeId(id);
 
         return ResponseEntity.ok(employeeResponses);
     }

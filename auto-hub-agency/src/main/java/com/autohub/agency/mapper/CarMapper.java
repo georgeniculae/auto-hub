@@ -1,12 +1,13 @@
 package com.autohub.agency.mapper;
 
 import com.autohub.agency.entity.BodyType;
-import com.autohub.agency.entity.Branch;
 import com.autohub.agency.entity.Car;
 import com.autohub.agency.entity.CarStatus;
+import com.autohub.agency.entity.RentalOffice;
 import com.autohub.dto.agency.BodyCategory;
 import com.autohub.dto.agency.CarRequest;
 import com.autohub.dto.agency.CarResponse;
+import com.autohub.dto.ai.AvailableCarDetails;
 import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.dto.common.CarState;
 import com.autohub.exception.AutoHubException;
@@ -26,8 +27,9 @@ import java.io.IOException;
 )
 public interface CarMapper {
 
-    @Mapping(target = "originalBranchId", expression = "java(car.getOriginalBranch().getId())")
-    @Mapping(target = "actualBranchId", expression = "java(car.getActualBranch().getId())")
+    @Mapping(target = "initialRentalOfficeId", expression = "java(car.getInitialRentalOffice().getId())")
+    @Mapping(target = "actualRentalOfficeId", expression = "java(car.getActualRentalOffice().getId())")
+    @Mapping(target = "carLocation", expression = "java(car.getActualRentalOffice().getCity())")
     @Mapping(target = "bodyCategory", source = "bodyType")
     @Mapping(target = "carState", source = "carStatus")
     CarResponse mapEntityToDto(Car car);
@@ -35,12 +37,16 @@ public interface CarMapper {
     @Mapping(target = "bodyType", expression = "java(mapToBodyType(carRequest.bodyCategory()))")
     @Mapping(target = "carStatus", expression = "java(mapToCarStatus(carRequest.carState()))")
     @Mapping(target = "image", expression = "java(mapToImage(image))")
-    @Mapping(target = "originalBranch", expression = "java(originalBranch)")
-    @Mapping(target = "actualBranch", expression = "java(actualBranch)")
-    Car getNewCar(CarRequest carRequest, MultipartFile image, Branch originalBranch, Branch actualBranch);
+    @Mapping(target = "initialRentalOffice", expression = "java(initialRentalOffice)")
+    @Mapping(target = "actualRentalOffice", expression = "java(actualRentalOffice)")
+    Car getNewCar(CarRequest carRequest, MultipartFile image, RentalOffice initialRentalOffice, RentalOffice actualRentalOffice);
 
-    @Mapping(target = "actualBranchId", expression = "java(car.getActualBranch().getId())")
+    @Mapping(target = "actualRentalOfficeId", expression = "java(car.getActualRentalOffice().getId())")
     AvailableCarInfo mapToAvailableCarInfo(Car car);
+
+    @Mapping(target = "bodyCategory", source = "bodyType")
+    @Mapping(target = "carLocation", expression = "java(car.getActualRentalOffice().getCity())")
+    AvailableCarDetails mapEntityToAvailableCarDetails(Car car);
 
     default BodyType mapToBodyType(BodyCategory bodyCategory) {
         return BodyType.valueOf(bodyCategory.name());

@@ -47,8 +47,8 @@ public class InvoiceProcessorService {
 
     private void closeBooking(Invoice invoice) {
         Long bookingId = invoice.getBookingId();
-        Long returnBranchId = invoice.getReturnBranchId();
-        BookingClosingDetails bookingClosingDetails = getBookingClosingDetails(bookingId, returnBranchId);
+        Long returnRentalOfficeId = invoice.getReturnRentalOfficeId();
+        BookingClosingDetails bookingClosingDetails = getBookingClosingDetails(bookingId, returnRentalOfficeId);
 
         bookingUpdateProducerService.closeBooking(bookingClosingDetails);
     }
@@ -70,10 +70,10 @@ public class InvoiceProcessorService {
                 .build();
     }
 
-    private BookingClosingDetails getBookingClosingDetails(Long bookingId, Long returnBranchId) {
+    private BookingClosingDetails getBookingClosingDetails(Long bookingId, Long returnRentalOfficeId) {
         return BookingClosingDetails.builder()
                 .bookingId(bookingId)
-                .returnBranchId(returnBranchId)
+                .returnRentalOfficeId(returnRentalOfficeId)
                 .build();
     }
 

@@ -1,5 +1,6 @@
 package com.autohub.agency.service;
 
+import com.autohub.agency.entity.Branch;
 import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.mapper.RentalOfficeMapper;
 import com.autohub.agency.mapper.RentalOfficeMapperImpl;
@@ -39,6 +40,9 @@ class RentalOfficeServiceTest {
 
     @Mock
     private RentalOfficeRepository rentalOfficeRepository;
+
+    @Mock
+    private BranchService branchService;
 
     @Spy
     private RentalOfficeMapper rentalOfficeMapper = new RentalOfficeMapperImpl();
@@ -85,7 +89,9 @@ class RentalOfficeServiceTest {
                 TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
         RentalOfficeRequest rentalOfficeRequest =
                 TestUtil.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
+        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
 
+        when(branchService.findEntityById(anyLong())).thenReturn(branch);
         when(rentalOfficeRepository.save(any(RentalOffice.class))).thenReturn(rentalOffice);
 
         RentalOfficeResponse savedRentalOfficeResponse = rentalOfficeService.saveRentalOffice(rentalOfficeRequest);
@@ -99,8 +105,10 @@ class RentalOfficeServiceTest {
     void updateRentalOfficeTest_success() {
         RentalOffice rentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
         RentalOfficeRequest rentalOfficeRequest = TestUtil.getResourceAsJson("/data/RentalOfficeRequest.json", RentalOfficeRequest.class);
+        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
 
         when(rentalOfficeRepository.findById(anyLong())).thenReturn(Optional.of(rentalOffice));
+        when(branchService.findEntityById(anyLong())).thenReturn(branch);
         when(rentalOfficeRepository.save(any(RentalOffice.class))).thenReturn(rentalOffice);
 
         RentalOfficeResponse updatedRentalOfficeResponse = rentalOfficeService.updateRentalOffice(1L, rentalOfficeRequest);

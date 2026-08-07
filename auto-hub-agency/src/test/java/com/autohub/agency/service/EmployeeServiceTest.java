@@ -1,7 +1,7 @@
 package com.autohub.agency.service;
 
-import com.autohub.agency.entity.Branch;
 import com.autohub.agency.entity.Employee;
+import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.mapper.EmployeeMapper;
 import com.autohub.agency.mapper.EmployeeMapperImpl;
 import com.autohub.agency.repository.EmployeeRepository;
@@ -40,7 +40,7 @@ class EmployeeServiceTest {
     private EmployeeRepository employeeRepository;
 
     @Mock
-    private BranchService branchService;
+    private RentalOfficeService rentalOfficeService;
 
     @Spy
     private EmployeeMapper employeeMapper = new EmployeeMapperImpl();
@@ -83,9 +83,9 @@ class EmployeeServiceTest {
         EmployeeRequest employeeRequest =
                 TestUtil.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
 
-        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
+        RentalOffice workingRentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
-        when(branchService.findEntityById(anyLong())).thenReturn(branch);
+        when(rentalOfficeService.findEntityById(anyLong())).thenReturn(workingRentalOffice);
         when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
         EmployeeResponse savedEmployeeResponse = employeeService.saveEmployee(employeeRequest);
@@ -101,9 +101,9 @@ class EmployeeServiceTest {
         EmployeeRequest employeeRequest =
                 TestUtil.getResourceAsJson("/data/EmployeeRequest.json", EmployeeRequest.class);
 
-        Branch branch = TestUtil.getResourceAsJson("/data/Branch.json", Branch.class);
+        RentalOffice workingRentalOffice = TestUtil.getResourceAsJson("/data/RentalOffice.json", RentalOffice.class);
 
-        when(branchService.findEntityById(anyLong())).thenReturn(branch);
+        when(rentalOfficeService.findEntityById(anyLong())).thenReturn(workingRentalOffice);
         when(employeeRepository.findById(anyLong())).thenReturn(Optional.of(employee));
         when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
@@ -112,12 +112,12 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void findEmployeesByBranchIdTest_success() {
+    void findEmployeesByRentalOfficeIdTest_success() {
         Employee employee = TestUtil.getResourceAsJson("/data/Employee.json", Employee.class);
 
-        when(employeeRepository.findAllEmployeesByBranchId(anyLong())).thenReturn(Stream.of(employee));
+        when(employeeRepository.findAllEmployeesByRentalOfficeId(anyLong())).thenReturn(Stream.of(employee));
 
-        List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByBranchId(1L);
+        List<EmployeeResponse> employeeResponses = employeeService.findEmployeesByRentalOfficeId(1L);
         AssertionUtil.assertEmployeeResponse(employee, employeeResponses.getFirst());
     }
 

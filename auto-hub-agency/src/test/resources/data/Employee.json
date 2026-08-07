@@ -3,15 +3,17 @@
   "firstName": "Ion",
   "lastName": "Popescu",
   "jobPosition": "manager",
-  "workingBranch": {
+  "workingRentalOffice": {
     "id": 1,
-    "name": "Test Branch",
+    "name": "Test Rental Office",
+    "city": "Ploiesti",
     "address": "Ploiesti",
-    "rentalOffice": {
+    "branch": {
       "id": 1,
-      "name": "Test Rental Office",
-      "contactAddress": "Ploiesti",
-      "phoneNumber": ""
+      "name": "Test Branch",
+      "region": "Ploiesti",
+      "address": "Ploiesti",
+      "phoneNumber": "0722222222"
     }
   }
 }

@@ -1,6 +1,7 @@
 package com.autohub.agency.repository;
 
 import com.autohub.agency.entity.Car;
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ActiveProfiles("test")
@@ -74,6 +76,40 @@ class CarRepositoryTest {
     void findImageByCarIdTest_success() {
         Optional<Car> optionalCar = carRepository.findImageByCarId(1L);
         assertTrue(optionalCar.isPresent());
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    void findAllCarsTest_actualRentalOfficeIsInitialized() {
+        try (Stream<Car> carsStream = carRepository.findAllCars()) {
+            List<Car> cars = carsStream.toList();
+
+            assertFalse(cars.isEmpty(), "seed-ul trebuie sa contina masini, altfel testul nu verifica nimic");
+            assertTrue(
+                    cars.stream().allMatch(car -> car.getActualRentalOffice() != null
+                            && Hibernate.isInitialized(car.getActualRentalOffice())),
+                    "actualRentalOffice trebuie adus de join-ul explicit, altfel CarMapper.carLocation declanseaza N+1"
+            );
+        }
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    void findAllAvailableCarsByLocationTest_success() {
+        try (Stream<Car> carStream = carRepository.findAllAvailableCarsByLocation("Ploiesti")) {
+            List<Car> cars = carStream.toList();
+
+            assertEquals(1, cars.size());
+            assertEquals("Ploiesti", cars.getFirst().getActualRentalOffice().getCity());
+        }
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    void findAllAvailableCarsByLocationTest_unknownLocation() {
+        try (Stream<Car> carStream = carRepository.findAllAvailableCarsByLocation("Cluj")) {
+            assertTrue(carStream.toList().isEmpty());
+        }
     }
 
 }
