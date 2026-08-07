@@ -8,6 +8,9 @@ import java.time.LocalDate;
 
 @Builder(toBuilder = true)
 public record TripInfo(
+        @NotEmpty(message = "Start location cannot be empty")
+        String startLocation,
+
         @NotEmpty
         String destination,
 

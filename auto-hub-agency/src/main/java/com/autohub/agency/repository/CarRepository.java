@@ -142,4 +142,30 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             where car.id = ?1""")
     Optional<Car> findImageByCarId(Long id);
 
+    @Query("""
+            Select new Car(
+            car.id,
+            car.make,
+            car.model,
+            car.bodyType,
+            car.yearOfProduction,
+            car.color,
+            car.mileage,
+            car.carStatus,
+            car.amount,
+            initialOffice,
+            actualOffice
+            )
+            From Car car
+            left join car.initialRentalOffice initialOffice
+            left join car.actualRentalOffice actualOffice
+            where car.carStatus = 'AVAILABLE'
+            and upper(actualOffice.city) = upper(?1)""")
+    @QueryHints(value = {
+            @QueryHint(name = HibernateHints.HINT_FETCH_SIZE, value = "1"),
+            @QueryHint(name = HibernateHints.HINT_CACHEABLE, value = "false"),
+            @QueryHint(name = HibernateHints.HINT_READ_ONLY, value = "true")
+    })
+    Stream<Car> findAllAvailableCarsByLocation(String location);
+
 }

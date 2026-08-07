@@ -51,7 +51,26 @@ leverages Spring Boot for building the application, Maven for dependency managem
 - Java 24 or higher
 - Maven 3.6 or higher
 - Kafka (for messaging functionality)
-- PostgreSQL
+- PostgreSQL, with the [pgvector](https://github.com/pgvector/pgvector) extension available on the server
+
+#### pgvector
+
+`auto-hub-ai` stores its RAG index in a `vector` column, and its Liquibase migration runs
+`CREATE EXTENSION vector` at startup. That statement only registers an extension whose files
+already exist on the server — it cannot install one. Without pgvector, startup fails with
+`extension "vector" is not available`.
+
+On Linux and macOS, install it from the usual package manager (`apt install postgresql-18-pgvector`,
+`brew install pgvector`, …). On Windows there are no official binaries and Stack Builder does not
+offer it, so build it from source:
+
+```sh
+   scripts\install-pgvector.bat
+```
+
+The script auto-elevates through UAC, and takes the PostgreSQL major version and pgvector tag as
+optional arguments (`scripts\install-pgvector.bat 19 v0.9.0`). Re-run it after every **major**
+PostgreSQL upgrade — the compiled DLL is tied to the server's ABI.
 
 ### Installation
 

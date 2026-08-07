@@ -9,6 +9,7 @@ import com.autohub.agency.producer.CarAvailableProducerService;
 import com.autohub.agency.repository.CarRepository;
 import com.autohub.dto.agency.CarRequest;
 import com.autohub.dto.agency.CarResponse;
+import com.autohub.dto.ai.AvailableCarDetails;
 import com.autohub.dto.common.AvailableCarInfo;
 import com.autohub.dto.common.CarStatusUpdate;
 import com.autohub.dto.common.CarUpdateDetails;
@@ -16,6 +17,7 @@ import com.autohub.dto.common.UpdateCarsRequest;
 import com.autohub.exception.AutoHubNotFoundException;
 import com.autohub.exception.AutoHubResponseStatusException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CarService {
 
     private final CarRepository carRepository;
@@ -63,6 +66,13 @@ public class CarService {
     public List<CarResponse> findAllAvailableCars() {
         try (Stream<Car> allAvailableCars = carRepository.findAllAvailableCars()) {
             return allAvailableCars.map(carMapper::mapEntityToDto).toList();
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<CarResponse> findAllAvailableCarsByLocation(String location) {
+        try (Stream<Car> cars = carRepository.findAllAvailableCarsByLocation(location)) {
+            return getCarResponses(cars);
         }
     }
 
@@ -170,8 +180,16 @@ public class CarService {
     }
 
     private void publishIfAvailable(Car car) {
-        if (CarStatus.AVAILABLE.equals(car.getCarStatus())) {
-            carAvailableProducerService.sendCarAvailable(carMapper.mapEntityToAvailableCarDetails(car));
+        if (!CarStatus.AVAILABLE.equals(car.getCarStatus())) {
+            return;
+        }
+
+        AvailableCarDetails availableCarDetails = carMapper.mapEntityToAvailableCarDetails(car);
+
+        try {
+            carAvailableProducerService.sendCarAvailable(availableCarDetails);
+        } catch (Exception e) {
+            log.error("Failed to publish available car {}: {}", car.getId(), e.getMessage(), e);
         }
     }
 

@@ -43,7 +43,7 @@ class CarSuggestionControllerTest {
 
         when(carSuggestionService.getChatOutput(any(TripInfo.class))).thenReturn(carSuggestionResponse);
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/car-suggestion?destination=Sinaia&peopleCount=3&tripKind=city&tripDate=2024-06-20")
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/car-suggestion?startLocation=Ploiesti&destination=Sinaia&peopleCount=3&tripKind=city&tripDate=2024-06-20")
                         .contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -57,7 +57,7 @@ class CarSuggestionControllerTest {
     @Test
     @WithAnonymousUser
     void getChatPromptTest_unauthorized() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/car-suggestion?destination=Sinaia&peopleCount=3&tripKind=city&tripDate=2024-06-20")
+        mockMvc.perform(MockMvcRequestBuilders.get(PATH + "/car-suggestion?startLocation=Ploiesti&destination=Sinaia&peopleCount=3&tripKind=city&tripDate=2024-06-20")
                         .contextPath(PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

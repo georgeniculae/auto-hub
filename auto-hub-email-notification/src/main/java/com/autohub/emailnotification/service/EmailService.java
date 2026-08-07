@@ -1,18 +1,16 @@
 package com.autohub.emailnotification.service;
 
+import com.autohub.dto.common.InvoiceResponse;
 import com.autohub.emailnotification.util.Constants;
 import com.autohub.exception.AutoHubException;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
-import com.sendgrid.Method;
-import com.sendgrid.Request;
-import com.sendgrid.Response;
-import com.sendgrid.SendGrid;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Content;
-import com.sendgrid.helpers.mail.objects.Email;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.io.StringWriter;
@@ -21,50 +19,47 @@ import java.io.StringWriter;
 @RequiredArgsConstructor
 public class EmailService {
 
-    private final SendGrid sendGrid;
+    private final JavaMailSender mailSender;
     private final MustacheFactory mustacheFactory;
 
-    @Value("${sendgrid.mail.from}")
+    @Value("${mail.from}")
     private String mailFrom;
 
-    @Value("${sendgrid.mail.name}")
+    @Value("${mail.name}")
     private String name;
 
-    public Response sendEmail(Mail mail) {
-        Request request = new Request();
-
-        request.setMethod(Method.POST);
-        request.setEndpoint(Constants.ENDPOINT);
-
+    public void sendEmail(String toAddressEmail, InvoiceResponse invoiceResponse, byte[] pdfBytes) {
         try {
-            request.setBody(mail.build());
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-            return sendGrid.api(request);
+            helper.setFrom(mailFrom, name);
+            helper.setTo(toAddressEmail);
+            helper.setSubject(Constants.SUBJECT);
+            helper.setText(getMailBody(invoiceResponse), true);
+            helper.addAttachment(getAttachmentName(invoiceResponse), new ByteArrayResource(pdfBytes),
+                    Constants.APPLICATION_PDF_CONTENT_TYPE);
+
+            mailSender.send(message);
         } catch (Exception e) {
-            throw new AutoHubException(e.getMessage());
+            throw new AutoHubException("Error sending invoice email: " + e.getMessage());
         }
     }
 
-    public Mail createMail(String toAddressEmail, Object object) {
-        Email from = new Email(mailFrom, name);
-        Email to = new Email(toAddressEmail);
-
-        Content content = new Content(Constants.CONTENT_TYPE, getMailBody(object));
-
-        Mail mail = new Mail(from, Constants.SUBJECT, to, content);
-        mail.setSubject(Constants.SUBJECT);
-
-        return mail;
+    private String getAttachmentName(InvoiceResponse invoiceResponse) {
+        return Constants.INVOICE_FILENAME_PREFIX + invoiceResponse.id() + Constants.PDF_EXTENSION;
     }
 
     private String getMailBody(Object object) {
         StringWriter stringWriter = new StringWriter();
 
-        Mustache mustache = mustacheFactory.compile(Constants.MAIL_TEMPLATE_FOLDER + Constants.FILE_NAME + Constants.MUSTACHE_FORMAT);
+        Mustache mustache = mustacheFactory.compile(
+                Constants.MAIL_TEMPLATE_FOLDER + Constants.FILE_NAME + Constants.MUSTACHE_FORMAT);
+
         try {
             mustache.execute(stringWriter, object).flush();
         } catch (Exception e) {
-            throw new AutoHubException(e.getMessage());
+            throw new AutoHubException("Error rendering mail body: " + e.getMessage());
         }
 
         return stringWriter.toString();

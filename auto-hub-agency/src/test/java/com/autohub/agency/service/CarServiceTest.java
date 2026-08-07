@@ -1,6 +1,7 @@
 package com.autohub.agency.service;
 
 import com.autohub.agency.entity.Car;
+import com.autohub.agency.entity.CarStatus;
 import com.autohub.agency.entity.Employee;
 import com.autohub.agency.entity.RentalOffice;
 import com.autohub.agency.mapper.CarMapper;
@@ -21,6 +22,7 @@ import com.autohub.exception.AutoHubException;
 import com.autohub.exception.AutoHubNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -40,13 +42,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -211,6 +217,90 @@ class CarServiceTest {
 
         List<CarResponse> carResponses = carService.updateCarsStatus(updateCarsRequest);
         AssertionUtil.assertCarResponse(car, carResponses.getFirst());
+    }
+
+    @Test
+    void updateCarsStatusTest_publishesOnlyAvailableCarsFromTwoUpdatedCars() {
+        Car previousCar = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
+        previousCar.setId(1L);
+
+        Car actualCar = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
+        actualCar.setId(2L);
+
+        UpdateCarsRequest updateCarsRequest =
+                TestUtil.getResourceAsJson("/data/UpdateCarsRequest.json", UpdateCarsRequest.class);
+
+        // Mock findAllById to return the two cars (before update)
+        when(carRepository.findAllById(anyList())).thenReturn(List.of(previousCar, actualCar));
+
+        // Create updated versions of the cars with expected statuses after update
+        Car previousCarAvailable = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
+        previousCarAvailable.setId(1L);
+        previousCarAvailable.setCarStatus(CarStatus.AVAILABLE);
+
+        Car actualCarNotAvailable = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
+        actualCarNotAvailable.setId(2L);
+        actualCarNotAvailable.setCarStatus(CarStatus.NOT_AVAILABLE);
+
+        // Mock saveAll to return the updated cars
+        when(carRepository.saveAll(anyList())).thenReturn(List.of(previousCarAvailable, actualCarNotAvailable));
+
+        List<CarResponse> carResponses = carService.updateCarsStatus(updateCarsRequest);
+
+        // Verify that sendCarAvailable is called exactly once (only for the AVAILABLE car)
+        ArgumentCaptor<AvailableCarDetails> availableCarCaptor =
+                ArgumentCaptor.forClass(AvailableCarDetails.class);
+
+        verify(carAvailableProducerService, times(1)).sendCarAvailable(availableCarCaptor.capture());
+
+        assertEquals(1L, availableCarCaptor.getValue().id());
+
+        // Verify we got both car responses
+        assertNotNull(carResponses);
+    }
+
+    @Test
+    void updateCarsStatusTest_continuesPublishingWhenFirstCarPublishFails() {
+        Car previousCar = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
+        previousCar.setId(1L);
+
+        Car actualCar = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
+        actualCar.setId(2L);
+
+        UpdateCarsRequest updateCarsRequest =
+                TestUtil.getResourceAsJson("/data/UpdateCarsRequest.json", UpdateCarsRequest.class);
+
+        // Mock findAllById to return the two cars (before update)
+        when(carRepository.findAllById(anyList())).thenReturn(List.of(previousCar, actualCar));
+
+        // Create updated versions of the cars, both AVAILABLE so both go through publishing
+        Car previousCarAvailable = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
+        previousCarAvailable.setId(1L);
+        previousCarAvailable.setCarStatus(CarStatus.AVAILABLE);
+
+        Car actualCarAvailable = TestUtil.getResourceAsJson("/data/Car.json", Car.class);
+        actualCarAvailable.setId(2L);
+        actualCarAvailable.setCarStatus(CarStatus.AVAILABLE);
+
+        // Mock saveAll to return the updated cars
+        when(carRepository.saveAll(anyList())).thenReturn(List.of(previousCarAvailable, actualCarAvailable));
+
+        // First publish attempt fails, second succeeds
+        doThrow(new AutoHubException("Kafka unavailable"))
+                .doNothing()
+                .when(carAvailableProducerService).sendCarAvailable(any(AvailableCarDetails.class));
+
+        List<CarResponse> carResponses =
+                assertDoesNotThrow(() -> carService.updateCarsStatus(updateCarsRequest));
+
+        // Verify that sendCarAvailable is still called for both cars despite the first failure
+        verify(carAvailableProducerService, times(2))
+                .sendCarAvailable(any(AvailableCarDetails.class));
+
+        // Verify we got both car responses back
+        assertNotNull(carResponses);
+        AssertionUtil.assertCarResponse(previousCarAvailable, carResponses.getFirst());
+        AssertionUtil.assertCarResponse(actualCarAvailable, carResponses.getLast());
     }
 
     @Test

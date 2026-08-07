@@ -44,6 +44,14 @@ public class CarController {
         return ResponseEntity.ok(carResponses);
     }
 
+    @GetMapping(path = "/availability/location/{location}")
+    @PreAuthorize("hasRole('user')")
+    public ResponseEntity<List<CarResponse>> findAllAvailableCarsByLocation(@PathVariable String location) {
+        List<CarResponse> carResponses = carService.findAllAvailableCarsByLocation(location);
+
+        return ResponseEntity.ok(carResponses);
+    }
+
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('user')")
     public ResponseEntity<CarResponse> findCarById(@PathVariable Long id) {

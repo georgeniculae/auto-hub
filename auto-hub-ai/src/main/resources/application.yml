@@ -9,6 +9,14 @@ spring:
   threads:
     virtual:
       enabled: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auto_hub_ai
+    username: ${POSTGRESQL_USERNAME}
+    password: ${POSTGRESQL_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
   ai:
     ollama:
       base-url: http://localhost:11434
@@ -16,11 +24,93 @@ spring:
         options:
           model: mistral
           temperature: 0.0F
+      embedding:
+        options:
+          model: nomic-embed-text
+    vectorstore:
+      pgvector:
+        initialize-schema: false
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 768
   cloud:
     loadbalancer:
       enabled: true
       cache:
         enabled: true
+    function:
+      definition: carAvailableConsumer;carStatusUpdateConsumer;updateCarsConsumer;carUpdateDetailsConsumer
+    stream:
+      defaultBinder: kafka
+      bindings:
+        carAvailableConsumer-in-0:
+          binder: kafka
+          destination: ${CAR_AVAILABLE_AI_TOPIC}
+          contentType: application/json
+          group: ${AI_CONSUMER_GROUP}
+          consumer:
+            default-retryable: true
+            max-attempts: 3
+            back-off-max-interval: 10000
+            back-off-multiplier: 1.0
+        carStatusUpdateConsumer-in-0:
+          binder: kafka
+          destination: ${SAVE_BOOKING_CAR_UPDATE_TOPIC}
+          contentType: application/json
+          group: ${AI_CONSUMER_GROUP}
+          consumer:
+            default-retryable: true
+            max-attempts: 3
+            back-off-max-interval: 10000
+            back-off-multiplier: 1.0
+        updateCarsConsumer-in-0:
+          binder: kafka
+          destination: ${UPDATE_BOOKING_CARS_UPDATE_TOPIC}
+          contentType: application/json
+          group: ${AI_CONSUMER_GROUP}
+          consumer:
+            default-retryable: true
+            max-attempts: 3
+            back-off-max-interval: 10000
+            back-off-multiplier: 1.0
+        carUpdateDetailsConsumer-in-0:
+          binder: kafka
+          destination: ${INVOICE_CAR_UPDATE_DETAILS_TOPIC}
+          contentType: application/json
+          group: ${AI_CONSUMER_GROUP}
+          consumer:
+            default-retryable: true
+            max-attempts: 3
+            back-off-max-interval: 10000
+            back-off-multiplier: 1.0
+      kafka:
+        binder:
+          auto-create-topics: true
+          auto-add-partitions: false
+          consumer-properties:
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            allow.auto.create.topics: true
+            auto.offset.reset: latest
+        bindings:
+          carAvailableConsumer-in-0:
+            consumer:
+              ack-mode: MANUAL_IMMEDIATE
+          carStatusUpdateConsumer-in-0:
+            consumer:
+              ack-mode: MANUAL_IMMEDIATE
+          updateCarsConsumer-in-0:
+            consumer:
+              ack-mode: MANUAL_IMMEDIATE
+          carUpdateDetailsConsumer-in-0:
+            consumer:
+              ack-mode: MANUAL_IMMEDIATE
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      enable-auto-commit: false
+    listener:
+      missing-topics-fatal: false
   web:
     error:
       include-message: always
@@ -81,6 +171,7 @@ logging:
 
 apikey:
   secret: ${API_KEY_SECRET}
+  system-roles: ROLE_admin,ROLE_user
 
 cors:
   mapping: '/**'

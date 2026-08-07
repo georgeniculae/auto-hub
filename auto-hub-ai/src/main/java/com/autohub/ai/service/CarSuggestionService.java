@@ -1,12 +1,9 @@
 package com.autohub.ai.service;
 
-import com.autohub.dto.agency.CarResponse;
 import com.autohub.dto.ai.CarSuggestionResponse;
 import com.autohub.dto.ai.TripInfo;
-import com.autohub.dto.common.AuthenticationInfo;
-import com.autohub.lib.util.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.retry.RetryListener;
+import org.springframework.ai.document.Document;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,42 +14,45 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class CarSuggestionService implements RetryListener {
+public class CarSuggestionService {
+
+    private static final int TOP_K = 10;
 
     private final ChatService chatService;
-    private final CarService carService;
+    private final CarVectorStoreService carVectorStoreService;
 
     public CarSuggestionResponse getChatOutput(TripInfo tripInfo) {
-        AuthenticationInfo authenticationInfo = AuthenticationUtil.getAuthenticationInfo();
-        List<String> cars = getAvailableCars(authenticationInfo);
-        String text = getText();
-        Map<String, Object> params = getParams(tripInfo, cars);
+        List<Document> documents = carVectorStoreService.searchSimilarCars(buildQueryText(tripInfo), TOP_K);
 
-        return chatService.getChatReply(text, params);
-    }
-
-    private List<String> getAvailableCars(AuthenticationInfo authenticationInfo) {
-        return carService.getAllAvailableCars(authenticationInfo)
-                .stream()
-                .map(this::getCarDetails)
+        List<String> cars = documents.stream()
+                .map(Document::getText)
                 .toList();
+
+        return chatService.getChatReply(getText(), getParams(tripInfo, cars));
     }
 
-    private String getCarDetails(CarResponse carResponse) {
-        return carResponse.make() + " " + carResponse.model() + " from " + carResponse.yearOfProduction();
+    private String buildQueryText(TripInfo tripInfo) {
+        return "Car rental for %d people starting from %s traveling to %s, Romania in %s for a %s trip".formatted(
+                tripInfo.peopleCount(),
+                tripInfo.startLocation(),
+                tripInfo.destination(),
+                getMonth(tripInfo.tripDate()),
+                tripInfo.tripKind()
+        );
     }
 
     private String getText() {
         return """
                 Which car from the following list {cars} is more suitable for rental from a rental car
-                agency for a trip for {peopleCount} people to {destination}, Romania in {month}?
-                The car will be used for {tripKind}.""";
+                agency for a trip for {peopleCount} people starting from {startLocation} to {destination},
+                Romania in {month}? The car will be used for {tripKind}.""";
     }
 
     private Map<String, Object> getParams(TripInfo tripInfo, List<String> cars) {
         return Map.of(
                 "cars", cars,
                 "peopleCount", tripInfo.peopleCount(),
+                "startLocation", tripInfo.startLocation(),
                 "destination", tripInfo.destination(),
                 "month", getMonth(tripInfo.tripDate()),
                 "tripKind", tripInfo.tripKind()

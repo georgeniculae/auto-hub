@@ -30,8 +30,7 @@ public class CarService {
     @Retryable(
             retryFor = Exception.class,
             maxAttempts = 5,
-            backoff = @Backoff(value = 5000L),
-            listeners = "carSuggestionService"
+            backoff = @Backoff(value = 5000L)
     )
     public List<CarResponse> getAllAvailableCars(AuthenticationInfo authenticationInfo) {
         return restClient.get()

@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -88,6 +89,38 @@ class CarControllerSecurityTest {
         // 403, not 401: SecurityConfig disables httpBasic and formLogin without registering an
         // AuthenticationEntryPoint, so Spring Security falls back to Http403ForbiddenEntryPoint.
         mockMvc.perform(get(PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = "user")
+    void findAllAvailableCarsByLocationTest_success() throws Exception {
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+
+        when(carService.findAllAvailableCarsByLocation("Ploiesti")).thenReturn(List.of(carResponse));
+
+        String content = mockMvc.perform(get(PATH + "/availability/location/{location}", "Ploiesti")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertNotNull(content);
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
+    void findAllAvailableCarsByLocationTest_forbidden() throws Exception {
+        // Authenticated but without the "user" role required by @PreAuthorize("hasRole('user')").
+        // Unlike findAllCarsTest_forbidden above (anonymous, rejected by the filter chain's
+        // anyRequest().authenticated() before method security is even reached), this principal
+        // clears the filter chain and is rejected by @EnableMethodSecurity's role check itself,
+        // which is the behavior this test needs to exercise for the new endpoint.
+        mockMvc.perform(get(PATH + "/availability/location/{location}", "Ploiesti")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());

@@ -1,0 +1,13 @@
+spring:
+  cloud:
+    bus:
+      enabled: false
+    discovery:
+      enabled: false
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+eureka:
+  client:
+    enabled: false

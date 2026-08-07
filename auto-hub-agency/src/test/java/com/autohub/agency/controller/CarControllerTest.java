@@ -33,6 +33,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = CarController.class)
@@ -195,6 +196,33 @@ class CarControllerTest {
                 .getResponse();
 
         assertNotNull(response.getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
+    void findAllAvailableCarsByLocationTest_success() throws Exception {
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+
+        when(carService.findAllAvailableCarsByLocation(anyString())).thenReturn(List.of(carResponse));
+
+        mockMvc.perform(get(PATH + "/availability/location/{location}", "Ploiesti")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].carLocation").value("Ploiesti"));
+    }
+
+    @Test
+    @WithAnonymousUser
+    void findAllAvailableCarsByLocationTest_unauthorized() throws Exception {
+        CarResponse carResponse = TestUtil.getResourceAsJson("/data/CarResponse.json", CarResponse.class);
+
+        when(carService.findAllAvailableCarsByLocation(anyString())).thenReturn(List.of(carResponse));
+
+        mockMvc.perform(get(PATH + "/availability/location/{location}", "Ploiesti")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
