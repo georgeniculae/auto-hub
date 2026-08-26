@@ -16,7 +16,6 @@
 
     <properties>
         <auto-hub-common.version>0.0.1-SNAPSHOT</auto-hub-common.version>
-        <flying-saucer-pdf-openpdf.version>9.4.0</flying-saucer-pdf-openpdf.version>
     </properties>
 
     <dependencies>
@@ -69,7 +68,6 @@
         <dependency>
             <groupId>org.xhtmlrenderer</groupId>
             <artifactId>flying-saucer-pdf-openpdf</artifactId>
-            <version>${flying-saucer-pdf-openpdf.version}</version>
         </dependency>
 
         <dependency>

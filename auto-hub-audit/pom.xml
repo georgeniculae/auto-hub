@@ -80,7 +80,7 @@
 
         <dependency>
             <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-71</artifactId>
+            <artifactId>hypersistence-utils-hibernate-73</artifactId>
         </dependency>
 
         <dependency>
