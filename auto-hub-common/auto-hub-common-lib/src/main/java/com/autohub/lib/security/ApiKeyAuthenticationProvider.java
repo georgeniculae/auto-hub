@@ -2,6 +2,7 @@ package com.autohub.lib.security;
 
 import com.autohub.exception.AutoHubException;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -32,7 +33,7 @@ public class ApiKeyAuthenticationProvider implements AuthenticationProvider {
     }
 
     @Override
-    public boolean supports(Class<?> authentication) {
+    public boolean supports(@NonNull Class<?> authentication) {
         return ApiKeyAuthenticationToken.class.isAssignableFrom(authentication);
     }
 
