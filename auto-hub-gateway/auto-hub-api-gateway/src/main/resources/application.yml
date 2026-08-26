@@ -70,6 +70,18 @@ spring:
                   args:
                     name: fallbackHandler
                     fallbackUri: forward:/fallback
+            - id: email-notification
+              uri: lb://auto-hub-email-notification
+              predicates:
+                - Path=/email-notification/**
+              filters:
+                - name: RequestTrace
+                  args:
+                    serviceId: auto-hub-email-notification
+                - name: CircuitBreaker
+                  args:
+                    name: fallbackHandler
+                    fallbackUri: forward:/fallback
             - id: expense
               uri: lb://auto-hub-expense
               predicates:
@@ -185,6 +197,8 @@ swagger:
       url: http://auto-hub-customer/customers/definition/v3/api-docs
     - identifier: expense
       url: http://auto-hub-expense/expense/definition/v3/api-docs
+    - identifier: email-notification
+      url: http://auto-hub-expense/email-notification/definition/v3/api-docs
 
 cache:
   swagger-update-frequency: 0 0 5 * * *

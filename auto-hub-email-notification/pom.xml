@@ -16,6 +16,7 @@
 
     <properties>
         <auto-hub-common.version>0.0.1-SNAPSHOT</auto-hub-common.version>
+        <flying-saucer-pdf-openpdf.version>9.4.0</flying-saucer-pdf-openpdf.version>
     </properties>
 
     <dependencies>
@@ -51,12 +52,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
@@ -74,7 +69,7 @@
         <dependency>
             <groupId>org.xhtmlrenderer</groupId>
             <artifactId>flying-saucer-pdf-openpdf</artifactId>
-            <version>9.4.0</version>
+            <version>${flying-saucer-pdf-openpdf.version}</version>
         </dependency>
 
         <dependency>
@@ -85,12 +80,16 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
         <!-- Test  -->

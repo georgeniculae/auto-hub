@@ -90,6 +90,14 @@ eureka:
   instance:
     prefer-ip-address: true
 
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /definition/swagger-ui.html
+    operationsSorter: method
+  api-docs:
+    path: /definition/v3/api-docs
+
 management:
   server:
     port: ${server.port}
@@ -126,14 +134,6 @@ mail:
 
 apikey:
   secret: ${API_KEY_SECRET}
-
-springdoc:
-  swagger-ui:
-    enabled: true
-    path: /definition/swagger-ui.html
-    operationsSorter: method
-  api-docs:
-    path: /definition/v3/api-docs
 
 mustache-template:
   enabled: true

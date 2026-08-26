@@ -126,8 +126,6 @@ spring:
       acks: all
     consumer:
       enable-auto-commit: false
-  sendgrid:
-    api-key: ${SENDGRID_API_KEY}
   web:
     error:
       include-message: always

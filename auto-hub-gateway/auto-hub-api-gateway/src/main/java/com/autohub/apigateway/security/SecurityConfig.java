@@ -40,6 +40,7 @@ public class SecurityConfig {
                                         "/bookings/definition/**",
                                         "/customers/definition/**",
                                         "/customers/register",
+                                        "/email-notification/definition/**",
                                         "/expense/definition/**",
                                         "/mcp/**",
                                         "/actuator/**"
