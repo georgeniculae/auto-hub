@@ -8,6 +8,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "apikey", name = "secret")
@@ -18,7 +20,7 @@ public class ApiKeyAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) {
-        String apiKey = authentication.getPrincipal().toString();
+        String apiKey = Objects.requireNonNull(authentication.getPrincipal()).toString();
 
         if (apiKeySecret.equals(apiKey)) {
             ApiKeyAuthenticationToken apiKeyAuthenticationToken = (ApiKeyAuthenticationToken) authentication;
