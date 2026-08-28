@@ -1,9 +1,22 @@
 spring:
   cloud:
-    bus:
-      enabled: false
     discovery:
       enabled: false
-    consul:
-      config:
-        enabled: false
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+eureka:
+  client:
+    enabled: false
+
+POSTGRESQL_USERNAME: test
+POSTGRESQL_PASSWORD: test
+API_KEY_SECRET: test-api-key-secret
+EUREKA_USER: test
+EUREKA_PASSWORD: test
+AGENCY_CONSUMER_GROUP: test-agency-group
+CAR_AVAILABLE_AI_TOPIC: test-car-available-ai
+SAVE_BOOKING_CAR_UPDATE_TOPIC: test-save-booking-car-update
+UPDATE_BOOKING_CARS_UPDATE_TOPIC: test-update-booking-cars-update
+INVOICE_CAR_UPDATE_DETAILS_TOPIC: test-invoice-car-update-details

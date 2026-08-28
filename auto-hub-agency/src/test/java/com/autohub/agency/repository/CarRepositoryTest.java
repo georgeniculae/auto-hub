@@ -3,15 +3,6 @@ package com.autohub.agency.repository;
 import com.autohub.agency.entity.Car;
 import org.hibernate.Hibernate;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.postgresql.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,23 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ActiveProfiles("test")
-@Testcontainers(disabledWithoutDocker = true)
-@SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class CarRepositoryTest {
-
-    @Container
-    @ServiceConnection
-    static PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:latest");
-
-    @Autowired
-    private CarRepository carRepository;
-
-    @Test
-    void checkIfConnectionEstablished() {
-        assertTrue(postgres.isCreated());
-    }
+class CarRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     void findByIdTest_success() {
@@ -46,7 +21,6 @@ class CarRepositoryTest {
     }
 
     @Test
-    @Transactional(readOnly = true)
     void findAllCarsCarsTest_success() {
         try (Stream<Car> carsStream = carRepository.findAllCars()) {
             List<Car> cars = carsStream.toList();
@@ -55,7 +29,6 @@ class CarRepositoryTest {
     }
 
     @Test
-    @Transactional(readOnly = true)
     void findByFilterTest_success() {
         try (Stream<Car> carStream = carRepository.findByFilter("Golf")) {
             List<Car> cars = carStream.toList();
@@ -64,7 +37,6 @@ class CarRepositoryTest {
     }
 
     @Test
-    @Transactional(readOnly = true)
     void findCarsByMakeIgnoreCaseTest_success() {
         try (Stream<Car> carStream = carRepository.findCarsByMakeIgnoreCase("Volkswagen")) {
             List<Car> cars = carStream.toList();
@@ -79,7 +51,6 @@ class CarRepositoryTest {
     }
 
     @Test
-    @Transactional(readOnly = true)
     void findAllCarsTest_actualRentalOfficeIsInitialized() {
         try (Stream<Car> carsStream = carRepository.findAllCars()) {
             List<Car> cars = carsStream.toList();
@@ -94,7 +65,6 @@ class CarRepositoryTest {
     }
 
     @Test
-    @Transactional(readOnly = true)
     void findAllAvailableCarsByLocationTest_success() {
         try (Stream<Car> carStream = carRepository.findAllAvailableCarsByLocation("Ploiesti")) {
             List<Car> cars = carStream.toList();
@@ -105,7 +75,6 @@ class CarRepositoryTest {
     }
 
     @Test
-    @Transactional(readOnly = true)
     void findAllAvailableCarsByLocationTest_unknownLocation() {
         try (Stream<Car> carStream = carRepository.findAllAvailableCarsByLocation("Cluj")) {
             assertTrue(carStream.toList().isEmpty());
