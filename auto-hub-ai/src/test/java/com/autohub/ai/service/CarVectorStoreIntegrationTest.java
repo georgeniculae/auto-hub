@@ -27,7 +27,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ActiveProfiles("test")
 @Testcontainers(disabledWithoutDocker = true)
@@ -39,7 +38,9 @@ class CarVectorStoreIntegrationTest {
     @Container
     @ServiceConnection
     static PostgreSQLContainer postgres = new PostgreSQLContainer(
-            DockerImageName.parse("pgvector/pgvector:pg18").asCompatibleSubstituteFor("postgres")
+            DockerImageName
+                    .parse("pgvector/pgvector:pg18")
+                    .asCompatibleSubstituteFor("postgres")
     );
 
     @Autowired
@@ -82,8 +83,9 @@ class CarVectorStoreIntegrationTest {
 
                 @Override
                 @NonNull
-                public  EmbeddingResponse call(@NonNull EmbeddingRequest request) {
-                    List<Embedding> embeddings = request.getInstructions().stream()
+                public EmbeddingResponse call(@NonNull EmbeddingRequest request) {
+                    List<Embedding> embeddings = request.getInstructions()
+                            .stream()
                             .map(this::computeVector)
                             .map(vector -> new Embedding(vector, 0))
                             .toList();
