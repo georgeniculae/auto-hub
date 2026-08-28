@@ -1,7 +1,7 @@
 spring:
   cloud:
-    bus:
-      enabled: false
+    function:
+      definition: ""
     discovery:
       enabled: false
   liquibase:
@@ -11,3 +11,14 @@ spring:
 eureka:
   client:
     enabled: false
+
+POSTGRESQL_USERNAME: test
+POSTGRESQL_PASSWORD: test
+API_KEY_SECRET: test-api-key-secret
+EUREKA_USER: test
+EUREKA_PASSWORD: test
+AI_CONSUMER_GROUP: test-ai-group
+CAR_AVAILABLE_AI_TOPIC: test-car-available-ai
+SAVE_BOOKING_CAR_UPDATE_TOPIC: test-save-booking-car-update
+UPDATE_BOOKING_CARS_UPDATE_TOPIC: test-update-booking-cars-update
+INVOICE_CAR_UPDATE_DETAILS_TOPIC: test-invoice-car-update-details
