@@ -3,11 +3,10 @@ package com.autohub.emailnotification.repository;
 import com.autohub.emailnotification.entity.InvoiceDocument;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
@@ -21,13 +20,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ActiveProfiles("test")
 @Testcontainers(disabledWithoutDocker = true)
-@SpringBootTest
+@DataJpaTest(showSql = false)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class InvoiceDocumentRepositoryTest {
 
-    @Container
     @ServiceConnection
-    static PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:latest");
+    static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer("postgres:latest");
+
+    static {
+        POSTGRES.start();
+    }
 
     @Autowired
     private InvoiceDocumentRepository invoiceDocumentRepository;
@@ -44,7 +46,7 @@ class InvoiceDocumentRepositoryTest {
 
     @Test
     void checkIfConnectionEstablished() {
-        assertTrue(postgres.isCreated());
+        assertTrue(POSTGRES.isRunning());
     }
 
     @Test

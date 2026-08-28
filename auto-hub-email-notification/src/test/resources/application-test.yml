@@ -1,7 +1,5 @@
 spring:
   cloud:
-    bus:
-      enabled: false
     discovery:
       enabled: false
   liquibase:
@@ -15,3 +13,14 @@ eureka:
 mail:
   from: test@autohub.test
   name: Auto Hub Test
+
+POSTGRESQL_USERNAME: test
+POSTGRESQL_PASSWORD: test
+API_KEY_SECRET: test-api-key-secret
+EUREKA_USER: test
+EUREKA_PASSWORD: test
+EMAIL_NOTIFICATION_CONSUMER_GROUP: test-email-notification-group
+EMAIL_NOTIFICATION_TOPIC: test-email-notification
+MAILJET_API_KEY: test-mailjet-api-key
+MAILJET_SECRET_KEY: test-mailjet-secret-key
+MAIL_FROM: test@autohub.test
