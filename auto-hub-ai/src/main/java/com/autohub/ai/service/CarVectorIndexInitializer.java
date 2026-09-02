@@ -23,12 +23,12 @@ public class CarVectorIndexInitializer {
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
         try {
-            carVectorStoreService.deleteAllCars();
-
             List<CarResponse> cars = carService.getAllAvailableCars(apiKeyProvider.getAuthenticationInfo());
-            cars.stream()
+            List<AvailableCarDetails> availableCars = cars.stream()
                     .map(this::toAvailableCarDetails)
-                    .forEach(carVectorStoreService::addCar);
+                    .toList();
+
+            carVectorStoreService.addCars(availableCars);
 
             log.info("Vector store reinitialized with {} available cars", cars.size());
         } catch (Exception e) {

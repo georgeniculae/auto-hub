@@ -29,11 +29,14 @@ public class CarVectorStoreService {
     @Value("${spring.ai.vectorstore.pgvector.table-name:vector_store}")
     private String tableName;
 
-    public void addCar(AvailableCarDetails car) {
-        vectorStore.delete(List.of(toDocumentId(car.id())));
-        vectorStore.add(List.of(buildDocument(car)));
+    public void addCars(List<AvailableCarDetails> cars) {
+        List<String> carIds = getCarIds(cars);
+        List<Document> carDocuments = getCarDocuments(cars);
 
-        log.info("Car with id {} added to vector store", car.id());
+        vectorStore.delete(carIds);
+        vectorStore.add(carDocuments);
+
+        log.info("Car(s) with id(s) {} added to vector store", carIds);
     }
 
     public void deleteCar(Long carId) {
@@ -55,6 +58,18 @@ public class CarVectorStoreService {
                         .topK(topK)
                         .build()
         );
+    }
+
+    private List<String> getCarIds(List<AvailableCarDetails> cars) {
+        return cars.stream()
+                .map(availableCarDetails -> toDocumentId(availableCarDetails.id()))
+                .toList();
+    }
+
+    private List<Document> getCarDocuments(List<AvailableCarDetails> cars) {
+        return cars.stream()
+                .map(this::buildDocument)
+                .toList();
     }
 
     private String toDocumentId(Long carId) {

@@ -38,7 +38,7 @@ class CarVectorStoreServiceTest {
 
     @Test
     void addCarTest_contentDescribesTheCar() {
-        carVectorStoreService.addCar(car());
+        carVectorStoreService.addCars(List.of(getAvailableCarDetails()));
 
         verify(vectorStore).add(captor.capture());
 
@@ -50,7 +50,7 @@ class CarVectorStoreServiceTest {
 
     @Test
     void addCarTest_metadataCarriesTheCarId() {
-        carVectorStoreService.addCar(car());
+        carVectorStoreService.addCars(List.of(getAvailableCarDetails()));
 
         verify(vectorStore).add(captor.capture());
 
@@ -65,7 +65,7 @@ class CarVectorStoreServiceTest {
         verify(jdbcTemplate).update(anyString());
     }
 
-    private static AvailableCarDetails car() {
+    private AvailableCarDetails getAvailableCarDetails() {
         return AvailableCarDetails.builder()
                 .id(1L)
                 .make("Volkswagen")

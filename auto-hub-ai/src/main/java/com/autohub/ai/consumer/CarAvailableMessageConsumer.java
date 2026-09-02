@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 @Configuration
@@ -24,7 +25,7 @@ public class CarAvailableMessageConsumer {
     }
 
     private void processMessage(Message<AvailableCarDetails> message) {
-        carVectorStoreService.addCar(message.getPayload());
+        carVectorStoreService.addCars(List.of(message.getPayload()));
         KafkaUtil.acknowledgeMessage(message.getHeaders());
         log.info("Car indexed after becoming available");
     }

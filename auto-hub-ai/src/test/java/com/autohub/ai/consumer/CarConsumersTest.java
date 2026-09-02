@@ -18,6 +18,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -66,7 +67,7 @@ class CarConsumersTest {
 
         carAvailableMessageConsumer.carAvailableConsumer().accept(message(payload));
 
-        verify(carVectorStoreService).addCar(payload);
+        verify(carVectorStoreService).addCars(List.of(payload));
         verify(acknowledgment).acknowledge();
     }
 
