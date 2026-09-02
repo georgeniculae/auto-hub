@@ -97,7 +97,7 @@ class CarVectorStoreIntegrationTest {
 
     }
 
-    private AvailableCarDetails getAvailableCar(Long id, String location) {
+    private AvailableCarDetails getAvailableCarDetails(Long id, String location) {
         return AvailableCarDetails.builder()
                 .id(id)
                 .make("Volkswagen")
@@ -140,7 +140,7 @@ class CarVectorStoreIntegrationTest {
     @Test
     void addCarThenSearchReturnsIt() {
         carVectorStoreService.deleteAllCars();
-        carVectorStoreService.addCars(List.of(getAvailableCar(1L, "Ploiesti")));
+        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Ploiesti")));
 
         List<Document> found = carVectorStoreService.searchSimilarCars("Volkswagen Golf in Ploiesti", 5);
 
@@ -150,8 +150,8 @@ class CarVectorStoreIntegrationTest {
     @Test
     void addingSameCarTwiceKeepsOneRow() {
         carVectorStoreService.deleteAllCars();
-        carVectorStoreService.addCars(List.of(getAvailableCar(1L, "Ploiesti")));
-        carVectorStoreService.addCars(List.of(getAvailableCar(1L, "Bucuresti")));
+        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Ploiesti")));
+        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Bucuresti")));
 
         assertEquals(1L, countRows());
     }
@@ -159,7 +159,7 @@ class CarVectorStoreIntegrationTest {
     @Test
     void deleteCarRemovesTheRow() {
         carVectorStoreService.deleteAllCars();
-        carVectorStoreService.addCars(List.of(getAvailableCar(1L, "Ploiesti")));
+        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Ploiesti")));
         carVectorStoreService.deleteCar(1L);
 
         assertEquals(0L, countRows());

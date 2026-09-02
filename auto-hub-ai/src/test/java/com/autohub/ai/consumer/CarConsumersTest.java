@@ -27,6 +27,12 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class CarConsumersTest {
 
+    @InjectMocks
+    private UpdateCarsMessageConsumer updateCarsMessageConsumer;
+
+    @InjectMocks
+    private CarUpdateDetailsMessageConsumer carUpdateDetailsMessageConsumer;
+
     @Mock
     private CarVectorStoreService carVectorStoreService;
 
@@ -38,18 +44,6 @@ class CarConsumersTest {
 
     @InjectMocks
     private CarStatusUpdateMessageConsumer carStatusUpdateMessageConsumer;
-
-    @InjectMocks
-    private UpdateCarsMessageConsumer updateCarsMessageConsumer;
-
-    @InjectMocks
-    private CarUpdateDetailsMessageConsumer carUpdateDetailsMessageConsumer;
-
-    private <T> Message<T> message(T payload) {
-        return MessageBuilder.withPayload(payload)
-                .setHeader(KafkaHeaders.ACKNOWLEDGMENT, acknowledgment)
-                .build();
-    }
 
     @Test
     void carAvailableConsumerTest_addsAndAcknowledges() {
@@ -65,7 +59,7 @@ class CarConsumersTest {
                 .carLocation("Ploiesti")
                 .build();
 
-        carAvailableMessageConsumer.carAvailableConsumer().accept(message(payload));
+        carAvailableMessageConsumer.carAvailableConsumer().accept(getMessage(payload));
 
         verify(carVectorStoreService).addCars(List.of(payload));
         verify(acknowledgment).acknowledge();
@@ -78,7 +72,7 @@ class CarConsumersTest {
                 .carState(CarState.NOT_AVAILABLE)
                 .build();
 
-        carStatusUpdateMessageConsumer.carStatusUpdateConsumer().accept(message(payload));
+        carStatusUpdateMessageConsumer.carStatusUpdateConsumer().accept(getMessage(payload));
 
         verify(carVectorStoreService).deleteCar(1L);
         verify(acknowledgment).acknowledge();
@@ -91,7 +85,7 @@ class CarConsumersTest {
                 .carState(CarState.AVAILABLE)
                 .build();
 
-        carStatusUpdateMessageConsumer.carStatusUpdateConsumer().accept(message(payload));
+        carStatusUpdateMessageConsumer.carStatusUpdateConsumer().accept(getMessage(payload));
 
         verify(carVectorStoreService, never()).deleteCar(any());
         verify(acknowledgment).acknowledge();
@@ -104,7 +98,7 @@ class CarConsumersTest {
                 .actualCarId(2L)
                 .build();
 
-        updateCarsMessageConsumer.updateCarsConsumer().accept(message(payload));
+        updateCarsMessageConsumer.updateCarsConsumer().accept(getMessage(payload));
 
         verify(carVectorStoreService).deleteCar(2L);
         verify(acknowledgment).acknowledge();
@@ -118,10 +112,16 @@ class CarConsumersTest {
                 .receptionistEmployeeId(1L)
                 .build();
 
-        carUpdateDetailsMessageConsumer.carUpdateDetailsConsumer().accept(message(payload));
+        carUpdateDetailsMessageConsumer.carUpdateDetailsConsumer().accept(getMessage(payload));
 
         verify(carVectorStoreService).deleteCar(1L);
         verify(acknowledgment).acknowledge();
+    }
+
+    private <T> Message<T> getMessage(T payload) {
+        return MessageBuilder.withPayload(payload)
+                .setHeader(KafkaHeaders.ACKNOWLEDGMENT, acknowledgment)
+                .build();
     }
 
 }
