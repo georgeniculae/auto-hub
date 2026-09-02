@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -29,26 +30,29 @@ public class CarVectorStoreService {
     @Value("${spring.ai.vectorstore.pgvector.table-name:vector_store}")
     private String tableName;
 
+    public void replaceAllCars(List<AvailableCarDetails> cars) {
+        if (cars.isEmpty()) {
+            log.warn("Empty snapshot received for reindexing; leaving the vector store untouched");
+
+            return;
+        }
+
+        addCars(cars);
+        deleteCarsNotIn(cars);
+    }
+
     public void addCars(List<AvailableCarDetails> cars) {
-        List<String> carIds = getCarIds(cars);
         List<Document> carDocuments = getCarDocuments(cars);
 
-        vectorStore.delete(carIds);
         vectorStore.add(carDocuments);
 
-        log.info("Car(s) with id(s) {} added to vector store", carIds);
+        log.info("Car(s) with id(s) {} added to vector store", getCarIds(cars));
     }
 
     public void deleteCar(Long carId) {
         vectorStore.delete(List.of(toDocumentId(carId)));
 
         log.info("Car with id {} removed from vector store", carId);
-    }
-
-    public void deleteAllCars() {
-        jdbcTemplate.update("DELETE FROM " + tableName);
-
-        log.info("Vector store cleared");
     }
 
     public List<Document> searchSimilarCars(String queryText, int topK) {
@@ -58,6 +62,20 @@ public class CarVectorStoreService {
                         .topK(topK)
                         .build()
         );
+    }
+
+    private void deleteCarsNotIn(List<AvailableCarDetails> cars) {
+        List<String> carIds = getCarIds(cars);
+
+        int removed = jdbcTemplate.update(connection -> {
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement("DELETE FROM " + tableName + " WHERE id <> ALL (?)");
+            preparedStatement.setArray(1, connection.createArrayOf("uuid", carIds.toArray()));
+
+            return preparedStatement;
+        });
+
+        log.info("Removed {} car(s) no longer available from vector store", removed);
     }
 
     private List<String> getCarIds(List<AvailableCarDetails> cars) {

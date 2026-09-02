@@ -3,6 +3,7 @@ package com.autohub.ai.service;
 import com.autohub.dto.agency.BodyCategory;
 import com.autohub.dto.ai.AvailableCarDetails;
 import org.jspecify.annotations.NonNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.Embedding;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
@@ -27,6 +29,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ActiveProfiles("test")
 @Testcontainers(disabledWithoutDocker = true)
@@ -48,6 +51,9 @@ class CarVectorStoreIntegrationTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @MockitoBean
+    private CarService carService;
 
     @TestConfiguration
     static class StubEmbeddingConfig {
@@ -97,6 +103,116 @@ class CarVectorStoreIntegrationTest {
 
     }
 
+    @AfterEach
+    void clearVectorStore() {
+        jdbcTemplate.update("DELETE FROM vector_store");
+    }
+
+    @Test
+    void migrationCreatesVectorStoreTable() {
+        Boolean exists = jdbcTemplate.queryForObject("""
+                SELECT EXISTS (
+                    SELECT 1 FROM information_schema.tables
+                    WHERE table_schema = 'public' AND table_name = 'vector_store'
+                )""", Boolean.class);
+
+        assertEquals(Boolean.TRUE, exists);
+    }
+
+    @Test
+    void migrationCreatesHnswIndex() {
+        Boolean exists = jdbcTemplate.queryForObject(
+                """
+                        SELECT EXISTS (
+                            SELECT 1 FROM pg_indexes
+                            WHERE tablename = 'vector_store' AND indexname = 'idx_vector_store_embedding'
+                        )""",
+                Boolean.class
+        );
+
+        assertEquals(Boolean.TRUE, exists);
+    }
+
+    @Test
+    void addCarThenSearchReturnsIt() {
+        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Ploiesti")));
+
+        List<Document> found = carVectorStoreService.searchSimilarCars("Volkswagen Golf in Ploiesti", 5);
+
+        assertFalse(found.isEmpty());
+    }
+
+    @Test
+    void addingSameCarTwiceKeepsOneRow() {
+        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Ploiesti")));
+        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Ploiesti")));
+
+        assertEquals(1L, countRows());
+    }
+
+    @Test
+    void replaceAllCarsTest_removesCarsMissingFromTheSnapshot() {
+        carVectorStoreService.addCars(List.of(
+                getAvailableCarDetails(1L, "Ploiesti"),
+                getAvailableCarDetails(2L, "Bucuresti")
+        ));
+
+        carVectorStoreService.replaceAllCars(List.of(getAvailableCarDetails(1L, "Ploiesti")));
+
+        assertEquals(1L, countRows());
+        assertEquals(List.of("1"), getCarIdsInStore());
+    }
+
+    @Test
+    void replaceAllCarsTest_updatesCarsPresentInTheSnapshot() {
+        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Ploiesti")));
+        carVectorStoreService.replaceAllCars(List.of(getAvailableCarDetails(1L, "Cluj")));
+
+        assertEquals(1L, countRows());
+        assertTrue(getContentFor(1L).contains("Cluj"));
+    }
+
+    @Test
+    void replaceAllCarsTest_emptySnapshotLeavesTheStoreUntouched() {
+        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Ploiesti")));
+        carVectorStoreService.replaceAllCars(List.of());
+
+        assertEquals(1L, countRows(), "un snapshot gol nu poate ajunge aici decat printr-un bug; nu golim indexul");
+    }
+
+    @Test
+    void addCarsTest_updatesOneCarWithoutRemovingTheOthers() {
+        carVectorStoreService.addCars(List.of(
+                getAvailableCarDetails(1L, "Ploiesti"),
+                getAvailableCarDetails(2L, "Bucuresti")
+        ));
+
+        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Cluj")));
+
+        assertEquals(2L, countRows());
+        assertTrue(getContentFor(1L).contains("Cluj"));
+    }
+
+    @Test
+    void deleteCarRemovesTheRow() {
+        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Ploiesti")));
+        carVectorStoreService.deleteCar(1L);
+
+        assertEquals(0L, countRows());
+    }
+
+    private List<String> getCarIdsInStore() {
+        return jdbcTemplate.queryForList("SELECT metadata->>'carId' FROM vector_store", String.class);
+    }
+
+    private String getContentFor(Long carId) {
+        return jdbcTemplate.queryForObject(
+                "SELECT content FROM vector_store WHERE metadata->>'carId' = ?",
+                String.class,
+                carId.toString()
+        );
+    }
+
     private AvailableCarDetails getAvailableCarDetails(Long id, String location) {
         return AvailableCarDetails.builder()
                 .id(id)
@@ -113,56 +229,6 @@ class CarVectorStoreIntegrationTest {
 
     private long countRows() {
         return jdbcTemplate.queryForObject("SELECT count(*) FROM vector_store", Long.class);
-    }
-
-    @Test
-    void migrationCreatesVectorStoreTable() {
-        Boolean exists = jdbcTemplate.queryForObject("""
-                SELECT EXISTS (
-                    SELECT 1 FROM information_schema.tables
-                    WHERE table_schema = 'public' AND table_name = 'vector_store'
-                )""", Boolean.class);
-
-        assertEquals(Boolean.TRUE, exists);
-    }
-
-    @Test
-    void migrationCreatesHnswIndex() {
-        Boolean exists = jdbcTemplate.queryForObject("""
-                SELECT EXISTS (
-                    SELECT 1 FROM pg_indexes
-                    WHERE tablename = 'vector_store' AND indexname = 'idx_vector_store_embedding'
-                )""", Boolean.class);
-
-        assertEquals(Boolean.TRUE, exists);
-    }
-
-    @Test
-    void addCarThenSearchReturnsIt() {
-        carVectorStoreService.deleteAllCars();
-        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Ploiesti")));
-
-        List<Document> found = carVectorStoreService.searchSimilarCars("Volkswagen Golf in Ploiesti", 5);
-
-        assertFalse(found.isEmpty());
-    }
-
-    @Test
-    void addingSameCarTwiceKeepsOneRow() {
-        carVectorStoreService.deleteAllCars();
-        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Ploiesti")));
-        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Bucuresti")));
-
-        assertEquals(1L, countRows());
-    }
-
-    @Test
-    void deleteCarRemovesTheRow() {
-        carVectorStoreService.deleteAllCars();
-        carVectorStoreService.addCars(List.of(getAvailableCarDetails(1L, "Ploiesti")));
-        carVectorStoreService.deleteCar(1L);
-
-        assertEquals(0L, countRows());
     }
 
 }

@@ -18,8 +18,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class CarVectorStoreServiceTest {
@@ -59,10 +59,11 @@ class CarVectorStoreServiceTest {
     }
 
     @Test
-    void deleteAllCarsTest_clearsTheTable() {
-        carVectorStoreService.deleteAllCars();
+    void replaceAllCarsTest_emptySnapshotTouchesNothing() {
+        carVectorStoreService.replaceAllCars(List.of());
 
-        verify(jdbcTemplate).update(anyString());
+        verifyNoInteractions(vectorStore);
+        verifyNoInteractions(jdbcTemplate);
     }
 
     private AvailableCarDetails getAvailableCarDetails() {

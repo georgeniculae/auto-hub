@@ -28,7 +28,7 @@ public class CarVectorIndexInitializer {
                     .map(this::toAvailableCarDetails)
                     .toList();
 
-            carVectorStoreService.addCars(availableCars);
+            carVectorStoreService.replaceAllCars(availableCars);
 
             log.info("Vector store reinitialized with {} available cars", cars.size());
         } catch (Exception e) {
